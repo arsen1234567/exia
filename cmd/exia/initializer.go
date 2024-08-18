@@ -6,56 +6,57 @@ import (
 	"log"
 	"net/http"
 	"tender/internal/handlers"
-	"tender/internal/repositories"
+	repositories "tender/internal/repositories/dmart"
 	"tender/internal/services"
 )
 
 type application struct {
-	errorLog           *log.Logger
-	infoLog            *log.Logger
-	userHandler        *handlers.UserHandler
-	permissionHandler  *handlers.PermissionHandler
-	companyHandler     *handlers.CompanyHandler
-	transactionHandler *handlers.TransactionHandler
-	expenseHandler     *handlers.PersonalExpenseHandler
+	errorLog                          *log.Logger
+	infoLog                           *log.Logger
+	investment_oil_production_handler *handlers.InvestmentOilProductionHandler
+	// permissionHandler  *handlers.PermissionHandler
+	// companyHandler     *handlers.CompanyHandler
+	// transactionHandler *handlers.TransactionHandler
+	// expenseHandler     *handlers.PersonalExpenseHandler
 }
 
 func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 
-	userRepo := &repositories.UserRepository{Db: db}
-	userService := &services.UserService{Repo: userRepo}
-	userHandler := &handlers.UserHandler{Service: userService}
+	investment_oil_production_repository := &repositories.InvestmentOilProductionRepository{Db: db}
+	investment_oil_production_service := &services.InvestmentOilProductionService{Repo: investment_oil_production_repository}
+	investment_oil_production_handler := &handlers.InvestmentOilProductionHandler{Service: investment_oil_production_service}
 
-	permissionRepo := &repositories.PermissionRepository{Db: db}
-	permissionService := &services.PermissionService{Repo: permissionRepo}
-	permissionHandler := &handlers.PermissionHandler{Service: permissionService}
+	// permissionRepo := &repositories.PermissionRepository{Db: db}
+	// permissionService := &services.PermissionService{Repo: permissionRepo}
+	// permissionHandler := &handlers.PermissionHandler{Service: permissionService}
 
-	companyRepo := &repositories.CompanyRepository{Db: db}
-	companyService := &services.CompanyService{Repo: companyRepo}
-	companyHandler := &handlers.CompanyHandler{Service: companyService}
+	// companyRepo := &repositories.CompanyRepository{Db: db}
+	// companyService := &services.CompanyService{Repo: companyRepo}
+	// companyHandler := &handlers.CompanyHandler{Service: companyService}
 
-	transactionRepo := &repositories.TransactionRepository{Db: db}
-	transactionService := &services.TransactionService{Repo: transactionRepo}
-	transactionHandler := &handlers.TransactionHandler{Service: transactionService}
+	// transactionRepo := &repositories.TransactionRepository{Db: db}
+	// transactionService := &services.TransactionService{Repo: transactionRepo}
+	// transactionHandler := &handlers.TransactionHandler{Service: transactionService}
 
-	expenseRepo := &repositories.PersonalExpenseRepository{Db: db}
-	expenseService := &services.PersonalExpenseService{Repo: expenseRepo}
-	expenseHandler := &handlers.PersonalExpenseHandler{Service: expenseService}
+	// expenseRepo := &repositories.PersonalExpenseRepository{Db: db}
+	// expenseService := &services.PersonalExpenseService{Repo: expenseRepo}
+	// expenseHandler := &handlers.PersonalExpenseHandler{Service: expenseService}
 
 	return &application{
-		errorLog:           errorLog,
-		infoLog:            infoLog,
-		userHandler:        userHandler,
-		permissionHandler:  permissionHandler,
-		companyHandler:     companyHandler,
-		transactionHandler: transactionHandler,
-		expenseHandler:     expenseHandler,
+		errorLog:                          errorLog,
+		infoLog:                           infoLog,
+		investment_oil_production_handler: investment_oil_production_handler,
+		// permissionHandler:  permissionHandler,
+		// companyHandler:     companyHandler,
+		// transactionHandler: transactionHandler,
+		// expenseHandler:     expenseHandler,
+
 	}
 
 }
 
 func openDB(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("mysql", dsn)
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		log.Printf("%v", err)
 		return nil, err

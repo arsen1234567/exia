@@ -1,9 +1,10 @@
 package config
 
 import (
-	"gopkg.in/yaml.v2"
 	"log"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 // Config structure to hold configuration values
@@ -22,7 +23,7 @@ func LoadConfig() Config {
 	var cfg Config
 
 	// Read config file
-	data, err := os.ReadFile("C:\\Users\\Alim\\GolandProjects\\tender\\config\\config.yaml")
+	data, err := os.ReadFile("/Users/bekenov/Downloads/tender-community-main/config/config.yaml")
 	if err != nil {
 		log.Fatalf("Failed to read config file: %v", err)
 	}

@@ -3,13 +3,14 @@ package main
 import (
 	"database/sql"
 	"flag"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
 	"tender/internal/config"
 	"time"
+
+	_ "github.com/lib/pq" // Import PostgreSQL driver
+	"github.com/rs/cors"
 )
 
 func main() {

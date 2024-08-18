@@ -1,6 +1,6 @@
-server:
-  address: ":4000"
+  server:
+    address: ":4000"
 
-database:
-  driver: "mysql"
-  url: "root:@tcp(localhost:3306)/tender?parseTime=true"
+  database:
+    driver: "postgres"
+    url: "postgres://postgres:admin@localhost:5432/kazenergy?sslmode=disable"
