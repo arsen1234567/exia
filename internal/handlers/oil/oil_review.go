@@ -12,6 +12,10 @@ type InvestmentOilProductionHandler struct {
 	Service *services.InvestmentOilProductionService
 }
 
+type InvestmentReserves struct {
+	Service *services.InvestmentReservesService
+}
+
 func (h *InvestmentOilProductionHandler) GetInvestmentOilProductionSummary(w http.ResponseWriter, r *http.Request) {
 	yearStr := r.URL.Query().Get("year")
 	year, err := strconv.Atoi(yearStr)
