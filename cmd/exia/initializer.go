@@ -7,6 +7,7 @@ import (
 	"net/http"
 	handlers "tender/internal/handlers/oil"
 	repositories "tender/internal/repositories/dmart"
+	repositoriesprod "tender/internal/repositories/prod"
 	"tender/internal/services"
 )
 
@@ -14,6 +15,7 @@ type application struct {
 	errorLog                          *log.Logger
 	infoLog                           *log.Logger
 	investment_oil_production_handler *handlers.InvestmentOilProductionHandler
+	kgd_taxes_prod_handler            *handlers.KgdTaxesProdHandler
 	// permissionHandler  *handlers.PermissionHandler
 	// companyHandler     *handlers.CompanyHandler
 	// transactionHandler *handlers.TransactionHandler
@@ -25,6 +27,10 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	investment_oil_production_repository := &repositories.InvestmentOilProductionRepository{Db: db}
 	investment_oil_production_service := &services.InvestmentOilProductionService{Repo: investment_oil_production_repository}
 	investment_oil_production_handler := &handlers.InvestmentOilProductionHandler{Service: investment_oil_production_service}
+
+	kgd_taxes_prod_repository := &repositoriesprod.KgdTaxesProdRepository{Db: db}
+	kgd_taxes_prod_service := &services.KgdTaxesService{Repo: kgd_taxes_prod_repository}
+	kgd_taxes_prod_handler := &handlers.KgdTaxesProdHandler{Service: kgd_taxes_prod_service}
 
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
@@ -46,6 +52,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		errorLog:                          errorLog,
 		infoLog:                           infoLog,
 		investment_oil_production_handler: investment_oil_production_handler,
+		kgd_taxes_prod_handler:            kgd_taxes_prod_handler,
 		// permissionHandler:  permissionHandler,
 		// companyHandler:     companyHandler,
 		// transactionHandler: transactionHandler,
