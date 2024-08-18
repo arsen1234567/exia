@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/4a3ec111-1889-4d34-8577-10b509e10d71/console.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/db/migrations/000003_transactions.up.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/db/migrations/000004_permissions.up.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/db/migrations/000006_additional_expenses.up.sql" dialect="MySQL" />
+  </component>
+</project>

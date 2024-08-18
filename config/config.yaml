@@ -1,0 +1,6 @@
+server:
+  address: ":4000"
+
+database:
+  driver: "mysql"
+  url: "root:@tcp(localhost:3306)/tender?parseTime=true"
