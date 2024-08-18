@@ -12,7 +12,10 @@ type InvestmentOilProduction struct {
 	Unit          string  `json:"unit"`
 }
 
+
+
 type InvestmentOilProductionSummary struct {
 	CoverageScope string  `json:"coverage_scope"`
+	Unit          string  `json:"unit"`
 	TotalValue    float64 `json:"total_value"`
 }

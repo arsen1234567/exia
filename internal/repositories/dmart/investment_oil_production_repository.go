@@ -10,26 +10,29 @@ type InvestmentOilProductionRepository struct {
 	Db *sql.DB
 }
 
-func (r *InvestmentOilProductionRepository) GetInvestmentOilProductionSummary(ctx context.Context, year int) ([]models.InvestmentOilProductionSummary, error) {
+func (r *InvestmentOilProductionRepository) GetInvestmentOilProductionSummary(ctx context.Context, year int, unit string) ([]models.InvestmentOilProductionSummary, error) {
 	query := `
 		SELECT
 			CASE
 				WHEN abd_scope THEN 'Покрытие АБД'
 				ELSE 'Вне периметра'
 			END AS coverage_scope,
+			unit,
 			SUM(value) AS total_value
 		FROM 
 			dmart.investment_oil_production
 		WHERE 
 			year = $1
+			AND unit = $2
 		GROUP BY
 			CASE
 				WHEN abd_scope THEN 'Покрытие АБД'
 				ELSE 'Вне периметра'
-			END;
+			END,
+			unit;
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, year)
+	rows, err := r.Db.QueryContext(ctx, query, year, unit)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +41,7 @@ func (r *InvestmentOilProductionRepository) GetInvestmentOilProductionSummary(ct
 	var results []models.InvestmentOilProductionSummary
 	for rows.Next() {
 		var summary models.InvestmentOilProductionSummary
-		if err := rows.Scan(&summary.CoverageScope, &summary.TotalValue); err != nil {
+		if err := rows.Scan(&summary.CoverageScope, &summary.Unit, &summary.TotalValue); err != nil {
 			return nil, err
 		}
 		results = append(results, summary)
