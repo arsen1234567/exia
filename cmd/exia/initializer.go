@@ -5,15 +5,19 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	handlers "tender/internal/handlers/oil"
-	repositories "tender/internal/repositories/dmart"
+	gasHandlers "tender/internal/handlers/gas"
+	oilHandlers "tender/internal/handlers/oil"
+	dmartRepositories "tender/internal/repositories/dmart"
+	prodRepositories "tender/internal/repositories/prod"
 	"tender/internal/services"
+	prodServices "tender/internal/services/prod"
 )
 
 type application struct {
 	errorLog                          *log.Logger
 	infoLog                           *log.Logger
-	investment_oil_production_handler *handlers.InvestmentOilProductionHandler
+	investment_oil_production_handler *oilHandlers.InvestmentOilProductionHandler
+	gas_review_handler                *gasHandlers.GasReviewHandler
 	// permissionHandler  *handlers.PermissionHandler
 	// companyHandler     *handlers.CompanyHandler
 	// transactionHandler *handlers.TransactionHandler
@@ -22,9 +26,12 @@ type application struct {
 
 func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 
-	investment_oil_production_repository := &repositories.InvestmentOilProductionRepository{Db: db}
+	investment_oil_production_repository := &dmartRepositories.InvestmentOilProductionRepository{Db: db}
 	investment_oil_production_service := &services.InvestmentOilProductionService{Repo: investment_oil_production_repository}
-	investment_oil_production_handler := &handlers.InvestmentOilProductionHandler{Service: investment_oil_production_service}
+	investment_oil_production_handler := &oilHandlers.InvestmentOilProductionHandler{Service: investment_oil_production_service}
+	production_gas_repository := &prodRepositories.ProductionGasRepository{Db: db}
+	production_gas_service := &prodServices.ProductionGasService{Repo: production_gas_repository}
+	gas_review_handler := &gasHandlers.GasReviewHandler{Service: production_gas_service}
 
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
@@ -46,6 +53,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		errorLog:                          errorLog,
 		infoLog:                           infoLog,
 		investment_oil_production_handler: investment_oil_production_handler,
+		gas_review_handler:                gas_review_handler,
 		// permissionHandler:  permissionHandler,
 		// companyHandler:     companyHandler,
 		// transactionHandler: transactionHandler,
