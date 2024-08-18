@@ -9,8 +9,10 @@ import (
 	oilHandlers "tender/internal/handlers/oil"
 	dmartRepositories "tender/internal/repositories/dmart"
 	prodRepositories "tender/internal/repositories/prod"
+	rawDataRepositories "tender/internal/repositories/rawData"
 	"tender/internal/services"
 	prodServices "tender/internal/services/prod"
+	rawDataServices "tender/internal/services/rawData"
 )
 
 type application struct {
@@ -31,7 +33,9 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	investment_oil_production_handler := &oilHandlers.InvestmentOilProductionHandler{Service: investment_oil_production_service}
 	production_gas_repository := &prodRepositories.ProductionGasRepository{Db: db}
 	production_gas_service := &prodServices.ProductionGasService{Repo: production_gas_repository}
-	gas_review_handler := &gasHandlers.GasReviewHandler{Service: production_gas_service}
+	kgd_taxes_repository := &rawDataRepositories.KgdTaxesRepository{Db: db}
+	kgd_taxes_service := &rawDataServices.KgdTaxesService{Repo: kgd_taxes_repository}
+	gas_review_handler := &gasHandlers.GasReviewHandler{Service: production_gas_service, KgdTaxesService: kgd_taxes_service}
 
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
