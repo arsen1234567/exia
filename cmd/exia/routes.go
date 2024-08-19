@@ -14,6 +14,7 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/api/gas/review/production", http.HandlerFunc(app.gas_review_handler.GetGasProductionSummary))
 	mux.Get("/api/gas/review/taxes", http.HandlerFunc(app.gas_review_handler.GetKgdTaxesSummary))
+	mux.Get("/api/gas/review/recoverable_gas_reserves", http.HandlerFunc(app.gas_review_handler.GetRecoverableGasReservesSummary))
 	// Add more routes here as needed
 
 	return mux

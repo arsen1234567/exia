@@ -35,7 +35,9 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	production_gas_service := &prodServices.ProductionGasService{Repo: production_gas_repository}
 	kgd_taxes_repository := &rawDataRepositories.KgdTaxesRepository{Db: db}
 	kgd_taxes_service := &rawDataServices.KgdTaxesService{Repo: kgd_taxes_repository}
-	gas_review_handler := &gasHandlers.GasReviewHandler{Service: production_gas_service, KgdTaxesService: kgd_taxes_service}
+	ngs_reserves_gas_repository := &rawDataRepositories.NgsReservesGasRepository{Db: db}
+	ngs_reserves_gas_service := &rawDataServices.NgsReservesGasService{Repo: ngs_reserves_gas_repository}
+	gas_review_handler := &gasHandlers.GasReviewHandler{ProductionGasService: production_gas_service, KgdTaxesService: kgd_taxes_service, NgsReservesGasService: ngs_reserves_gas_service}
 
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
