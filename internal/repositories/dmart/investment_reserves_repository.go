@@ -19,7 +19,7 @@ func (r *InvestmentReservesRepository) GetInvestmentReservesSummary(ctx context.
 	  WHEN "Недропользователь" = 'ОБЩИЙ ФОНД РК' THEN 'Общий фонд РК'
 	  ELSE 'Вне периметра'
 	END AS category
-  FROM investment_reserves
+  FROM dmart.investment_reserves
   WHERE "Тип" = 'Извлекаемые';
 	`
 

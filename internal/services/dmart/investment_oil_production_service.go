@@ -3,15 +3,15 @@ package services
 import (
 	"context"
 	models "tender/internal/models/dmart" // Ensure this is correct
-	repositories "tender/internal/repositories/dmart"
+	repositories_dmart "tender/internal/repositories/dmart"
 )
 
 type InvestmentOilProductionService struct {
-	Repo *repositories.InvestmentOilProductionRepository
+	Repo *repositories_dmart.InvestmentOilProductionRepository
 }
 
 type InvestmentReservesService struct {
-	Repo *repositories.InvestmentReservesRepository
+	Repo *repositories_dmart.InvestmentReservesRepository
 }
 
 // GetInvestmentOilProductionSummary retrieves a summary of investment oil production for a specific year.

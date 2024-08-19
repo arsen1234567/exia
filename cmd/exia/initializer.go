@@ -8,14 +8,16 @@ import (
 	handlers "tender/internal/handlers/oil"
 	repositories "tender/internal/repositories/dmart"
 	repositoriesprod "tender/internal/repositories/prod"
-	"tender/internal/services"
+	dmartService "tender/internal/services/dmart"
+	rawService "tender/internal/services/rawData"
 )
 
 type application struct {
 	errorLog                          *log.Logger
 	infoLog                           *log.Logger
-	investment_oil_production_handler *handlers.InvestmentOilProductionHandler
-	kgd_taxes_prod_handler            *handlers.KgdTaxesProdHandler
+	investment_oil_production_handler *handlers.OilReviewHandler
+	kgd_taxes_prod_handler            *handlers.OilReviewHandler
+	investment_reserves_handler       *handlers.OilReviewHandler
 	// permissionHandler  *handlers.PermissionHandler
 	// companyHandler     *handlers.CompanyHandler
 	// transactionHandler *handlers.TransactionHandler
@@ -25,12 +27,16 @@ type application struct {
 func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 
 	investment_oil_production_repository := &repositories.InvestmentOilProductionRepository{Db: db}
-	investment_oil_production_service := &services.InvestmentOilProductionService{Repo: investment_oil_production_repository}
-	investment_oil_production_handler := &handlers.InvestmentOilProductionHandler{Service: investment_oil_production_service}
+	investment_oil_production_service := &dmartService.InvestmentOilProductionService{Repo: investment_oil_production_repository}
+	investment_oil_production_handler := &handlers.OilReviewHandler{InvestmentOilProductionService: investment_oil_production_service}
+
+	investment_reserves_repository := &repositories.InvestmentReservesRepository{Db: db}
+	investment_reserves_service := &dmartService.InvestmentReservesService{Repo: investment_reserves_repository}
+	investment_reserves_handler := &handlers.OilReviewHandler{InvestmentReservesService: investment_reserves_service}
 
 	kgd_taxes_prod_repository := &repositoriesprod.KgdTaxesProdRepository{Db: db}
-	kgd_taxes_prod_service := &services.KgdTaxesService{Repo: kgd_taxes_prod_repository}
-	kgd_taxes_prod_handler := &handlers.KgdTaxesProdHandler{Service: kgd_taxes_prod_service}
+	kgd_taxes_prod_service := &rawService.KgdTaxesService{Repo: kgd_taxes_prod_repository}
+	kgd_taxes_prod_handler := &handlers.OilReviewHandler{KgdTaxesProdService: kgd_taxes_prod_service}
 
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
@@ -53,6 +59,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		infoLog:                           infoLog,
 		investment_oil_production_handler: investment_oil_production_handler,
 		kgd_taxes_prod_handler:            kgd_taxes_prod_handler,
+		investment_reserves_handler:       investment_reserves_handler,
 		// permissionHandler:  permissionHandler,
 		// companyHandler:     companyHandler,
 		// transactionHandler: transactionHandler,
