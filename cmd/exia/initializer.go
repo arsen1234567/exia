@@ -10,16 +10,16 @@ import (
 	dmartRepositories "tender/internal/repositories/dmart"
 	prodRepositories "tender/internal/repositories/prod"
 	rawDataRepositories "tender/internal/repositories/rawData"
-	"tender/internal/services"
+	dmartServices "tender/internal/services/dmart"
 	prodServices "tender/internal/services/prod"
 	rawDataServices "tender/internal/services/rawData"
 )
 
 type application struct {
-	errorLog                          *log.Logger
-	infoLog                           *log.Logger
-	investment_oil_production_handler *oilHandlers.InvestmentOilProductionHandler
-	gas_review_handler                *gasHandlers.GasReviewHandler
+	errorLog           *log.Logger
+	infoLog            *log.Logger
+	oil_review_handler *oilHandlers.OilReviewHandler
+	gas_review_handler *gasHandlers.GasReviewHandler
 	// permissionHandler  *handlers.PermissionHandler
 	// companyHandler     *handlers.CompanyHandler
 	// transactionHandler *handlers.TransactionHandler
@@ -28,17 +28,26 @@ type application struct {
 
 func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 
-	investment_oil_production_repository := &dmartRepositories.InvestmentOilProductionRepository{Db: db}
-	investment_oil_production_service := &services.InvestmentOilProductionService{Repo: investment_oil_production_repository}
-	investment_oil_production_handler := &oilHandlers.InvestmentOilProductionHandler{Service: investment_oil_production_service}
 	production_gas_repository := &prodRepositories.ProductionGasRepository{Db: db}
 	production_gas_service := &prodServices.ProductionGasService{Repo: production_gas_repository}
+
 	kgd_taxes_repository := &rawDataRepositories.KgdTaxesRepository{Db: db}
 	kgd_taxes_service := &rawDataServices.KgdTaxesService{Repo: kgd_taxes_repository}
+
 	ngs_reserves_gas_repository := &rawDataRepositories.NgsReservesGasRepository{Db: db}
 	ngs_reserves_gas_service := &rawDataServices.NgsReservesGasService{Repo: ngs_reserves_gas_repository}
-	gas_review_handler := &gasHandlers.GasReviewHandler{ProductionGasService: production_gas_service, KgdTaxesService: kgd_taxes_service, NgsReservesGasService: ngs_reserves_gas_service}
 
+	investment_oil_production_repository := &dmartRepositories.InvestmentOilProductionRepository{Db: db}
+	investment_oil_production_service := &dmartServices.InvestmentOilProductionService{Repo: investment_oil_production_repository}
+
+	investment_reserves_repository := &dmartRepositories.InvestmentReservesRepository{Db: db}
+	investment_reserves_service := &dmartServices.InvestmentReservesService{Repo: investment_reserves_repository}
+
+	kgd_taxes_prod_repository := &prodRepositories.KgdTaxesProdRepository{Db: db}
+	kgd_taxes_prod_service := &prodServices.KgdTaxesProdService{Repo: kgd_taxes_prod_repository}
+
+	gas_review_handler := &gasHandlers.GasReviewHandler{ProductionGasService: production_gas_service, KgdTaxesService: kgd_taxes_service, NgsReservesGasService: ngs_reserves_gas_service}
+	oil_review_handler := &oilHandlers.OilReviewHandler{InvestmentOilProductionService: investment_oil_production_service, InvestmentReservesService: investment_reserves_service, KgdTaxesProdService: kgd_taxes_prod_service}
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
 	// permissionHandler := &handlers.PermissionHandler{Service: permissionService}
@@ -56,10 +65,10 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	// expenseHandler := &handlers.PersonalExpenseHandler{Service: expenseService}
 
 	return &application{
-		errorLog:                          errorLog,
-		infoLog:                           infoLog,
-		investment_oil_production_handler: investment_oil_production_handler,
-		gas_review_handler:                gas_review_handler,
+		errorLog:           errorLog,
+		infoLog:            infoLog,
+		gas_review_handler: gas_review_handler,
+		oil_review_handler: oil_review_handler,
 		// permissionHandler:  permissionHandler,
 		// companyHandler:     companyHandler,
 		// transactionHandler: transactionHandler,

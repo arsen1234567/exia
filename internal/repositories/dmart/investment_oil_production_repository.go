@@ -13,6 +13,20 @@ type InvestmentOilProductionRepository struct {
 func (r *InvestmentOilProductionRepository) GetInvestmentOilProductionSummary(ctx context.Context, year int, unit string) ([]models.InvestmentOilProductionSummary, error) {
 	query := `
 		SELECT
+			'Общий фонд РК' AS coverage_scope,
+			unit,
+			SUM(value) AS total_value
+		FROM 
+			dmart.investment_oil_production
+		WHERE 
+			year = $1
+			AND unit = $2
+		GROUP BY
+			unit
+
+		UNION ALL
+
+		SELECT
 			CASE
 				WHEN abd_scope THEN 'Покрытие АБД'
 				ELSE 'Вне периметра'
