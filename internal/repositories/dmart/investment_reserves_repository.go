@@ -13,14 +13,14 @@ type InvestmentReservesRepository struct {
 func (r *InvestmentReservesRepository) GetInvestmentReservesSummary(ctx context.Context, year int, unit string) ([]models.InvestmentReservesSummary, error) {
 	query := `
 	SELECT
-	SUM("Балансовые запасы на конец(А+В+С1)" + "Балансовые запасы на конец(С2)") AS total_sum,
+		SUM("Балансовые запасы на конец(А+В+С1)" + "Балансовые запасы на конец(С2)") AS total_sum,
 	CASE
 	  WHEN abd_scope THEN 'Покрытие АБД'
 	  WHEN "Недропользователь" = 'ОБЩИЙ ФОНД РК' THEN 'Общий фонд РК'
 	  ELSE 'Вне периметра'
 	END AS category
-  FROM dmart.investment_reserves
-  WHERE "Тип" = 'Извлекаемые';
+  	FROM dmart.investment_reserves
+  	WHERE "Тип" = 'Извлекаемые';
 	`
 
 	rows, err := r.Db.QueryContext(ctx, query, year, unit)

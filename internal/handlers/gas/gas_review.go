@@ -5,15 +5,20 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	dmartServices "tender/internal/services/dmart"
 	prodServices "tender/internal/services/prod"
-	kgdTaxesServices "tender/internal/services/rawData"
 	rawDataServices "tender/internal/services/rawData"
 )
 
 type GasReviewHandler struct {
 	ProductionGasService  *prodServices.ProductionGasService
-	KgdTaxesService       *kgdTaxesServices.KgdTaxesService
+	GasStepsService       *prodServices.GasStepsService
+	GasTotalsService      *prodServices.GasTotalsService
+	KgdTaxesService       *rawDataServices.KgdTaxesService
 	NgsReservesGasService *rawDataServices.NgsReservesGasService
+	StGasBalanceService   *rawDataServices.StGasBalanceService
+	DfoGgReportesService  *dmartServices.DfoGgReportesService
+	NaturalGasMainService *dmartServices.NaturalGasMainService
 }
 
 func (h *GasReviewHandler) GetGasProductionSummary(w http.ResponseWriter, r *http.Request) {
@@ -112,6 +117,129 @@ func (h *GasReviewHandler) GetRecoverableGasReservesSummary(w http.ResponseWrite
 	// Set the Content-Type header and encode the response as JSON
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(summary); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *GasReviewHandler) GetNetProfitSummary(w http.ResponseWriter, r *http.Request) {
+	// Create a context for the request
+	ctx := context.Background()
+
+	// Call the service function to get the net profit summary
+	summary, err := h.DfoGgReportesService.GetNetProfitSummary(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set the Content-Type header and encode the response as JSON
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(summary); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *GasReviewHandler) GetReserveRatio(w http.ResponseWriter, r *http.Request) {
+	// Create a context for the request
+	ctx := context.Background()
+
+	// Call the service function to get the reserve ratio
+	reserveRatio, err := h.NaturalGasMainService.GetReserveRatio(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set the Content-Type header and encode the response as JSON
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(reserveRatio); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *GasReviewHandler) GetAmountOfPredictedTaxes(w http.ResponseWriter, r *http.Request) {
+	// Create a context for the request
+	ctx := context.Background()
+
+	// Call the service function to get the amount of predicted taxes
+	amountOfPredictedTaxes, err := h.GasStepsService.GetAmountOfPredictedTaxes(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set the Content-Type header and encode the response as JSON
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(amountOfPredictedTaxes); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *GasReviewHandler) GetNPVplusTV(w http.ResponseWriter, r *http.Request) {
+	// Create a context for the request
+	ctx := context.Background()
+
+	// Call the service function to get the NPV plus Terminal Value
+	totalNPVplusTV, err := h.GasTotalsService.GetNPVplusTV(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set the Content-Type header and encode the response as JSON
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(totalNPVplusTV); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *GasReviewHandler) GetEBITDAmargin(w http.ResponseWriter, r *http.Request) {
+	// Create a context for the request
+	ctx := context.Background()
+
+	// Call the service function to get the EBITDA margin
+	ebitdaMargin, err := h.GasStepsService.GetEBITDAmargin(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set the Content-Type header and encode the response as JSON
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(ebitdaMargin); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *GasReviewHandler) GetGasBalance(w http.ResponseWriter, r *http.Request) {
+	// Extract and validate the year parameter from the query string
+	yearStr := r.URL.Query().Get("year")
+	year, err := strconv.Atoi(yearStr)
+	if err != nil || year <= 0 {
+		http.Error(w, "Invalid year parameter", http.StatusBadRequest)
+		return
+	}
+
+	// Extract the unit parameter from the query string
+	unit := r.URL.Query().Get("unit")
+	if unit != "m" && unit != "ft" {
+		http.Error(w, "Invalid unit parameter. Must be 'm' or 'ft'", http.StatusBadRequest)
+		return
+	}
+
+	// Create a context for the request
+	ctx := context.Background()
+
+	// Call the service function to get the gas balance summary
+	gasBalance, err := h.StGasBalanceService.GetGasBalance(ctx, int64(year), unit)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set the Content-Type header and encode the response as JSON
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(gasBalance); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
