@@ -3,4 +3,4 @@
 
   database:
     driver: "postgres"
-    url: "postgres://arsen.serikkaliyev.04icloud.com:admin@localhost:5432/kazenergy?sslmode=disable"
+    url: "postgres://postgres:admin@localhost:5432/kazenergy?sslmode=disable"
