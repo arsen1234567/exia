@@ -23,7 +23,7 @@ func LoadConfig() Config {
 	var cfg Config
 
 	// Read config file
-	data, err := os.ReadFile("/Users/arsen.serikkaliyev.04icloud.com/Desktop/exia/config/config.yaml")
+	data, err := os.ReadFile("/Users/bekenov/Downloads/tender-community-main/config/config.yaml")
 	if err != nil {
 		log.Fatalf("Failed to read config file: %v", err)
 	}
