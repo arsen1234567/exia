@@ -10,14 +10,14 @@ type SubsoilGeojsonRepository struct {
 	Db *sql.DB
 }
 
-func (r *SubsoilGeojsonRepository) GetKgdTaxesSummary(ctx context.Context) ([]models.SubsoilGeojson, error) {
+func (r *SubsoilGeojsonRepository) GetSubsoilGeojson(ctx context.Context) ([]models.SubsoilGeojson, error) {
 	query := `
-	SELECT 
+		SELECT 
 		*
-	FROM 
-		public.subsoil_geojson
-	
-	`
+		FROM 
+			public.subsoil_geojson
+		
+		`
 
 	rows, err := r.Db.QueryContext(ctx, query)
 	if err != nil {
@@ -28,7 +28,7 @@ func (r *SubsoilGeojsonRepository) GetKgdTaxesSummary(ctx context.Context) ([]mo
 	var results []models.SubsoilGeojson
 	for rows.Next() {
 		var summary models.SubsoilGeojson
-		if err := rows.Scan(&summary.Deposit, &summary.Company, &summary.Geojson); err != nil {
+		if err := rows.Scan(&summary.Deposit, &summary.Company, &summary.Geojson, &summary.Ploshad); err != nil {
 			return nil, err
 		}
 		results = append(results, summary)

@@ -46,6 +46,11 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashOilProduction(w http.Res
 		return
 	}
 
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
+
 	ctx := context.Background()
 	summary, err := h.InvestmentsDashService.GetInvestmentsDashOilProduction(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
 
@@ -78,6 +83,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashSpecificRevenue(w http.R
 		return
 	}
 
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 	ctx := context.Background()
 	summary, err := h.InvestmentsDashService.GetInvestmentsDashSpecificRevenue(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
 
@@ -112,6 +121,11 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashROA(w http.ResponseWrite
 
 	if currencyunit != "KZT" && currencyunit != "USD" {
 		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
 		return
 	}
 
@@ -151,10 +165,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashNetProfitMargin(w http.R
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	summary, err := h.InvestmentsDashService.GetInvestmentsDashNetProfitMargin(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
@@ -192,10 +206,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashSpecificNetProfit(w http
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	summary, err := h.InvestmentsDashService.GetInvestmentsDashSpecificNetProfit(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
@@ -233,10 +247,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashRevenue(w http.ResponseW
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	revenueSummary, err := h.InvestmentsDashService.GetInvestmentsDashRevenue(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
@@ -274,10 +288,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashOperatingProfit(w http.R
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	operatingProfitSummary, err := h.InvestmentsDashService.GetInvestmentsDashOperatingProfit(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
@@ -315,11 +329,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashEBITDA(w http.ResponseWr
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
-
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 	ctx := context.Background()
 	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashEBITDA(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
 	if err != nil {
@@ -356,10 +369,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashNetProfit(w http.Respons
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashNetProfit(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
@@ -397,11 +410,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashTotalTaxes(w http.Respon
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
-
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 	ctx := context.Background()
 	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashTotalTaxes(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
 	if err != nil {
@@ -438,10 +450,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashTaxBurden(w http.Respons
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashTaxBurden(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
@@ -479,10 +491,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashSpecificTaxes(w http.Res
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashSpecificTaxes(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
@@ -520,10 +532,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashAssets(w http.ResponseWr
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashAssets(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
@@ -561,10 +573,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashCapital(w http.ResponseW
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashCapital(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
@@ -602,10 +614,10 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashLiabilities(w http.Respo
 		return
 	}
 
-	// if finreporttype != "Separate" && finreporttype != "Consolidated" {
-	// 	http.Error(w, "Invalid report type. Only 'Separate' and 'Consolidated' are allowed.", http.StatusBadRequest)
-	// 	return
-	// }
+	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
 	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashLiabilities(ctx, currencyunit, company, productionunit, finreporttype, reportyear)

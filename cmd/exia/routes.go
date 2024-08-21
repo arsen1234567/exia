@@ -38,11 +38,13 @@ func (app *application) routes() http.Handler {
 	mux.Get("/api/oil/perfomance/capital", http.HandlerFunc(app.oil_perfomance_results_handler.GetInvestmentsDashCapital))
 	mux.Get("/api/oil/perfomance/liabilities", http.HandlerFunc(app.oil_perfomance_results_handler.GetInvestmentsDashLiabilities))
 
-	mux.Get("/api/oil/benchmarking/net-profit-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashSpecificNetProfitGraph))
-	mux.Get("/api/oil/benchmarking/roa-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashROAGraph))
-	mux.Get("/api/oil/benchmarking/specific-taxes-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetSpecificTaxesGraph)) // +usd
-	mux.Get("/api/oil/benchmarking/tax-burden-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetTaxBurdenGraph))
-	mux.Get("/api/oil/benchmarking/summa-taxes-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetSummaAllTaxes))
+	mux.Get("/api/oil/benchmarking/net-profit-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashSpecificNetProfitGraph)) // WORK
+	mux.Get("/api/oil/benchmarking/roa-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashROAGraph)) // WORK
+	mux.Get("/api/oil/benchmarking/specific-taxes-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetSpecificTaxesGraph)) // WORK
+	mux.Get("/api/oil/benchmarking/tax-burden-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetTaxBurdenGraph)) // WORK
+	mux.Get("/api/oil/benchmarking/summa-taxes-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetSummaAllTaxes)) // WORK
+
+	mux.Get("/api/oil/reserves/subsoil_geojson", http.HandlerFunc(app.oil_reserves_handler.GetSubsoilGeojson))
 
 	mux.Get("/api/gas/review/production", http.HandlerFunc(app.gas_review_handler.GetGasProductionSummary))
 	mux.Get("/api/gas/review/taxes", http.HandlerFunc(app.gas_review_handler.GetKgdTaxesSummary))

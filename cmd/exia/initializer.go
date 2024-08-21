@@ -9,9 +9,11 @@ import (
 	oilHandlers "tender/internal/handlers/oil"
 	dmartRepositories "tender/internal/repositories/dmart"
 	prodRepositories "tender/internal/repositories/prod"
+	publicRepositories "tender/internal/repositories/public"
 	rawDataRepositories "tender/internal/repositories/rawData"
 	dmartServices "tender/internal/services/dmart"
 	prodServices "tender/internal/services/prod"
+	publicServices "tender/internal/services/public"
 	rawDataServices "tender/internal/services/rawData"
 )
 
@@ -23,6 +25,7 @@ type application struct {
 	gas_review_handler             *gasHandlers.GasReviewHandler
 	oil_benchmarking_handler       *oilHandlers.OilBenchmarkingHandler
 	gas_perfomance_results_handler *gasHandlers.GasPerfomanceResultsHandler
+	oil_reserves_handler           *oilHandlers.OilReservesHandler
 	// permissionHandler  *handlers.PermissionHandler
 	// companyHandler     *handlers.CompanyHandler
 	// transactionHandler *handlers.TransactionHandler
@@ -30,6 +33,9 @@ type application struct {
 }
 
 func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
+
+	subsoil_geojson_repository := &publicRepositories.SubsoilGeojsonRepository{Db: db}
+	subsoil_geojson_service := &publicServices.SubsoilGeojsonService{Repo: subsoil_geojson_repository}
 
 	tax_burden_repository := &prodRepositories.TaxBurdenRepository{Db: db}
 	tax_burden_service := &prodServices.TaxBurdenService{Repo: tax_burden_repository}
@@ -125,6 +131,11 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		TaxBurdenService:       tax_burden_service,
 		KgdTaxesProdService:    kgd_taxes_prod_service,
 	}
+
+	oil_reserves_handler := &oilHandlers.OilReservesHandler{
+
+		SubsoilGeojsonService: subsoil_geojson_service,
+	}
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
 	// permissionHandler := &handlers.PermissionHandler{Service: permissionService}
@@ -148,6 +159,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		oil_review_handler:             oil_review_handler,
 		oil_perfomance_results_handler: oil_perfomance_results_handler,
 		oil_benchmarking_handler:       oil_benchmarking_handler,
+		oil_reserves_handler:           oil_reserves_handler,
 		// permissionHandler:  permissionHandler,
 		// companyHandler:     companyHandler,
 		// transactionHandler: transactionHandler,

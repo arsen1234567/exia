@@ -9,21 +9,21 @@ type SpecificTaxesRepository struct {
 	Db *sql.DB
 }
 
-func (r *SpecificTaxesRepository) GetSpecificTaxes(ctx context.Context, productionunit string, year int) (map[string]float64, error) {
+func (r *SpecificTaxesRepository) GetSpecificTaxes(ctx context.Context, year int, currency, reporttype string) (map[string]float64, error) {
 	query := `
     SELECT 
         "name_short_ru",
-        COALESCE(SUM("specific_tax"), 0) AS total_specific_tax
+        COALESCE(AVG("TotalTaxes" / NULLIF("Production", 0)), 0) AS average_specific_tax
     FROM 
-        prod.specific_taxes
+        dmart.investments_dash
     WHERE 
-        "ProductionUnit" = $1 AND
-        "year" = $2 
+        "report_year" = $1 AND
+        "currencyunit" = $2 AND
+        "report_type" = $3
     GROUP BY 
         "name_short_ru";
-    `
-
-	rows, err := r.Db.QueryContext(ctx, query, productionunit, year)
+`
+	rows, err := r.Db.QueryContext(ctx, query, year, currency, reporttype)
 	if err != nil {
 		return nil, err
 	}

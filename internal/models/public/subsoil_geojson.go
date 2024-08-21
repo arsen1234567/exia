@@ -1,8 +1,10 @@
 package models
 
+import "database/sql"
+
 type SubsoilGeojson struct {
-	Geojson string  `json:"geojson"`
-	Deposit string  `json:"Deposit"`
-	Company string  `json:"Компания"`
-	Ploshad float64 `json:"Ploshad"`
+	Geojson sql.NullString  `json:"geojson"`
+	Deposit sql.NullString  `json:"Deposit"`
+	Company sql.NullString  `json:"Компания"`
+	Ploshad sql.NullFloat64 `json:"Ploshad"`
 }
