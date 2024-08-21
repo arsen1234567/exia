@@ -27,7 +27,7 @@ jobs:
         docker build -t arsen333/exia:latest .
         docker push arsen333/exia:latest
 
-    - name: SSH and Deploy to VPS
+    - name: Deploy to VPS
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.VPS_HOST }}
