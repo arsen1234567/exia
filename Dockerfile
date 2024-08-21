@@ -13,9 +13,6 @@ RUN go mod download
 # Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
-# Copy the .env file into the container
-COPY .env .env
-
 # Build the Go app
 RUN go build -o main ./cmd/exia/.
 
