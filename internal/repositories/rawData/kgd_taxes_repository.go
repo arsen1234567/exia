@@ -10,7 +10,7 @@ type KgdTaxesRepository struct {
 	Db *sql.DB
 }
 
-func (r *KgdTaxesRepository) GetKgdTaxesSummary(ctx context.Context, year int) ([]models.KgdTaxesSummary, error) {
+func (r *KgdTaxesRepository) GetKgdTaxesSummary(ctx context.Context, year int, currency string) ([]models.KgdTaxesSummary, error) {
 	query := `
 	SELECT 
 		EXTRACT(YEAR FROM receipt_date) AS year,
@@ -30,13 +30,14 @@ func (r *KgdTaxesRepository) GetKgdTaxesSummary(ctx context.Context, year int) (
 		AND pay_status = '2 - Разнесен'
 		AND pay_type = 'Налог'
 		AND EXTRACT(YEAR FROM receipt_date) <= CAST($1 AS INTEGER)
+		AND currency = $2
 	GROUP BY 
 		year
 	ORDER BY 
 		year;
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, year)
+	rows, err := r.Db.QueryContext(ctx, query, year, currency)
 	if err != nil {
 		return nil, err
 	}
