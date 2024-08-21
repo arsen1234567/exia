@@ -32,7 +32,7 @@ func main() {
 
 	fmt.Println("database url", cfg.Database.URL)
 	log.Println("database url", cfg.Database.URL)
-	db, err := openDB(cfg.Database.URL)
+	db, err := openDB(os.Getenv("DB_URL"))
 	if err != nil {
 		errorLog.Fatal(err)
 	}

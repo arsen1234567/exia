@@ -7,7 +7,6 @@ import (
 	"net/http"
 	gasHandlers "tender/internal/handlers/gas"
 	oilHandlers "tender/internal/handlers/oil"
-	reservesHandlers "tender/internal/handlers/reserves"
 	dmartRepositories "tender/internal/repositories/dmart"
 	prodRepositories "tender/internal/repositories/prod"
 	rawDataRepositories "tender/internal/repositories/rawData"
@@ -20,9 +19,10 @@ type application struct {
 	errorLog                       *log.Logger
 	infoLog                        *log.Logger
 	oil_review_handler             *oilHandlers.OilReviewHandler
+	oil_perfomance_results_handler *oilHandlers.OilPerfomanceResultsHandler
 	gas_review_handler             *gasHandlers.GasReviewHandler
+	oil_benchmarking_handler       *oilHandlers.OilBenchmarkingHandler
 	gas_perfomance_results_handler *gasHandlers.GasPerfomanceResultsHandler
-	reserves_oil_handler           *reservesHandlers.ReservesOilHandler
 	// permissionHandler  *handlers.PermissionHandler
 	// companyHandler     *handlers.CompanyHandler
 	// transactionHandler *handlers.TransactionHandler
@@ -30,6 +30,15 @@ type application struct {
 }
 
 func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
+
+	tax_burden_repository := &prodRepositories.TaxBurdenRepository{Db: db}
+	tax_burden_service := &prodServices.TaxBurdenService{Repo: tax_burden_repository}
+
+	specific_taxes_repository := &prodRepositories.SpecificTaxesRepository{Db: db}
+	specific_taxes_service := &prodServices.SpecificTaxesService{Repo: specific_taxes_repository}
+
+	investment_dash_repository := &dmartRepositories.InvestmentsDashRepository{Db: db}
+	investment_dash_service := &dmartServices.InvestmentsDashService{Repo: investment_dash_repository}
 
 	production_gas_repository := &prodRepositories.ProductionGasRepository{Db: db}
 	production_gas_service := &prodServices.ProductionGasService{Repo: production_gas_repository}
@@ -105,7 +114,17 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		InvestmentReviewForecastTotalService: investment_review_forecast_total_service,
 	}
 
-	reserves_oil_handler := &reservesHandlers.ReservesOilHandler{}
+	oil_perfomance_results_handler := &oilHandlers.OilPerfomanceResultsHandler{
+
+		InvestmentsDashService: investment_dash_service,
+	}
+
+	oil_benchmarking_handler := &oilHandlers.OilBenchmarkingHandler{
+		InvestmentsDashService: investment_dash_service,
+		SpecificTaxesService:   specific_taxes_service,
+		TaxBurdenService:       tax_burden_service,
+		KgdTaxesProdService:    kgd_taxes_prod_service,
+	}
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
 	// permissionHandler := &handlers.PermissionHandler{Service: permissionService}
@@ -127,8 +146,14 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		infoLog:                        infoLog,
 		gas_review_handler:             gas_review_handler,
 		oil_review_handler:             oil_review_handler,
+		oil_perfomance_results_handler: oil_perfomance_results_handler,
+		oil_benchmarking_handler:       oil_benchmarking_handler,
+		// permissionHandler:  permissionHandler,
+		// companyHandler:     companyHandler,
+		// transactionHandler: transactionHandler,
+		// expenseHandler:     expenseHandler,
+
 		gas_perfomance_results_handler: gas_perfomance_results_handler,
-		reserves_oil_handler:           reserves_oil_handler,
 	}
 
 }

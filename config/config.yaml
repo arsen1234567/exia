@@ -1,6 +1,6 @@
-  server:
-    address: ":4000"
+server:
+  address: ":4000"
 
-  database:
-    driver: "postgres"
-    url: "postgres://arsen.serikkaliyev.04icloud.com:admin@localhost:5432/kazenergy?sslmode=disable"
+database:
+  driver: "postgres"
+  url: "postgres://bekenov:admin@localhost:5432/kazenergy?sslmode=disable"

@@ -10,8 +10,8 @@ type KgdTaxesService struct {
 	Repo *repositories.KgdTaxesRepository
 }
 
-func (s *KgdTaxesService) GetKgdTaxesSummary(ctx context.Context, year int) ([]models.KgdTaxesSummary, error) {
-	summary, err := s.Repo.GetKgdTaxesSummary(ctx, year)
+func (s *KgdTaxesService) GetKgdTaxesSummary(ctx context.Context, year int, currency string) ([]models.KgdTaxesSummary, error) {
+	summary, err := s.Repo.GetKgdTaxesSummary(ctx, year, currency)
 	if err != nil {
 		return nil, err
 	}

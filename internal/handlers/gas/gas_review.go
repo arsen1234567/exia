@@ -64,6 +64,7 @@ func (h *GasReviewHandler) GetGasProductionSummary(w http.ResponseWriter, r *htt
 func (h *GasReviewHandler) GetKgdTaxesSummary(w http.ResponseWriter, r *http.Request) {
 	// Extract and validate the year parameter from the query string
 	yearStr := r.URL.Query().Get("year")
+	currency := r.URL.Query().Get("currency")
 	year, err := strconv.Atoi(yearStr)
 	if err != nil || year <= 0 {
 		http.Error(w, "Invalid year parameter", http.StatusBadRequest)
@@ -74,7 +75,7 @@ func (h *GasReviewHandler) GetKgdTaxesSummary(w http.ResponseWriter, r *http.Req
 	ctx := context.Background()
 
 	// Call the service function to get the KgdTaxes summary
-	summary, err := h.KgdTaxesService.GetKgdTaxesSummary(ctx, year)
+	summary, err := h.KgdTaxesService.GetKgdTaxesSummary(ctx, year, currency)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
