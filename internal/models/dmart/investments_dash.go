@@ -1,12 +1,12 @@
 package models
 
 type InvestmentsDash struct {
-	name_short_ru               string  `json:"name_short_ru"`
-	name_abbr                   string  `json:"name_abbr "`
+	Name_short_ru               string  `json:"name_short_ru"`
+	Name_abbr                   string  `json:"name_abbr "`
 	Production                  float64 `json:"Production"`
 	ProductionUnit              string  `json:"ProductionUnit"`
-	report_type                 string  `json:"report_type"`
-	report_year                 int     `json:"report_year"`
+	Report_type                 string  `json:"report_type"`
+	Report_year                 int     `json:"report_year"`
 	Revenue                     int     `json:"Revenue"`
 	NetProfit                   int     `json:"NetProfit"`
 	Capital                     int     `json:"Capital"`
@@ -34,6 +34,6 @@ type InvestmentsDash struct {
 	BalanceС2                   float64 `json:"Balance(С2)"`
 	GKZАВС1                     float64 `json:"GKZ(А+В+С1)"`
 	GKZС2                       float64 `json:"GKZ(С2)"`
-	currencyunit                float64 `json:"currencyunit"`
-	name_short_en               float64 `json:"name_short_en"`
+	Currencyunit                string  `json:"currencyunit"`
+	Name_short_en               float64 `json:"name_short_en"`
 }

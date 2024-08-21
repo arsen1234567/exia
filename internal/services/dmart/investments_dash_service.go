@@ -9,10 +9,146 @@ type InvestmentsDashService struct {
 	Repo *repositories_dmart.InvestmentsDashRepository
 }
 
-func (s *InvestmentsDashService) GetInvestmentsDash(ctx context.Context) (float64, error) {
-	summary, err := s.Repo.GetInvestmentsDash(ctx)
+func (s *InvestmentsDashService) GetInvestmentsDash(ctx context.Context, company string) (float64, error) {
+	summary, err := s.Repo.GetInvestmentsDash(ctx, company)
 	if err != nil {
 		return 0, err
 	}
 	return summary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashOilProduction(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportYear int) (map[int]float64, error) {
+	summary, err := s.Repo.GetInvestmentsDashOilProduction(ctx, currencyunit, companyname, productionunit, finreporttype, reportYear)
+	if err != nil {
+		return nil, err
+	}
+	return summary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashSpecificRevenue(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportYear int) (map[int]float64, error) {
+	summary, err := s.Repo.GetInvestmentsDashSpecificRevenue(ctx, currencyunit, companyname, productionunit, finreporttype, reportYear)
+	if err != nil {
+		return nil, err
+	}
+	return summary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashROA(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	roaSummary, err := s.Repo.GetInvestmentsDashROA(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return roaSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashNetProfitMargin(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	avgNetProfitToRevenueSummary, err := s.Repo.GetInvestmentsDashNetProfitMargin(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return avgNetProfitToRevenueSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashSpecificNetProfit(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	avgNetProfitToRevenueSummary, err := s.Repo.GetInvestmentsDashSpecificNetProfit(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return avgNetProfitToRevenueSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashRevenue(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	revenueSummary, err := s.Repo.GetInvestmentsDashRevenue(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return revenueSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashOperatingProfit(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	operatingProfitSummary, err := s.Repo.GetInvestmentsDashOperatingProfit(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return operatingProfitSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashEBITDA(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashEBITDA(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashNetProfit(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashNetProfit(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashTotalTaxes(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashTotalTaxes(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashTaxBurden(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashTaxBurden(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashSpecificTaxes(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashSpecificTaxes(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashAssets(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashAssets(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashCapital(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashCapital(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashLiabilities(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashLiabilities(ctx, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashSpecificNetProfitGraph(ctx context.Context, currencyunit, productionunit string, reportyear int) (map[string]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashSpecificNetProfitGraph(ctx, currencyunit, productionunit, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashROAGraph(ctx context.Context, currencyunit, productionunit string, reportyear int) (map[string]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashROAGraph(ctx, currencyunit, productionunit, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
 }

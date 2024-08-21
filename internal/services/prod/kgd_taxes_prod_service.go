@@ -17,3 +17,11 @@ func (s *KgdTaxesProdService) GetKgdTaxesProdSummary(ctx context.Context, year i
 	}
 	return summary, nil
 }
+
+func (s *KgdTaxesProdService) GetSummaAllTaxes(ctx context.Context, year int, currency string) (map[string]float64, error) {
+	totalSumSummary, err := s.Repo.GetSummaAllTaxes(ctx, year, currency)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}

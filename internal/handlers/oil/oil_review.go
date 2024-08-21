@@ -242,3 +242,4 @@ func (h *OilReviewHandler) GetCompaniesForecastSteps(w http.ResponseWriter, r *h
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
+
