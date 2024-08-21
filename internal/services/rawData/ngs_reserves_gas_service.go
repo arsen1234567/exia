@@ -11,8 +11,8 @@ type NgsReservesGasService struct {
 }
 
 // GetRecoverableGasReservesSummary retrieves the summary of recoverable gas reserves for the specified year range
-func (s *NgsReservesGasService) GetRecoverableGasReservesSummary(ctx context.Context, startYear, endYear int) ([]models.RecoverableGasReservesSummary, error) {
-	summary, err := s.Repo.GetRecoverableGasReserves(ctx, startYear, endYear)
+func (s *NgsReservesGasService) GetRecoverableGasReservesSummary(ctx context.Context, year int) ([]models.RecoverableGasReservesSummary, error) {
+	summary, err := s.Repo.GetRecoverableGasReserves(ctx, year)
 	if err != nil {
 		return nil, err
 	}

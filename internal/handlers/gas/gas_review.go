@@ -88,19 +88,12 @@ func (h *GasReviewHandler) GetKgdTaxesSummary(w http.ResponseWriter, r *http.Req
 }
 
 func (h *GasReviewHandler) GetRecoverableGasReservesSummary(w http.ResponseWriter, r *http.Request) {
-	// Extract and validate the start year parameter from the query string
-	startYearStr := r.URL.Query().Get("start_year")
-	startYear, err := strconv.Atoi(startYearStr)
-	if err != nil || startYear <= 0 {
-		http.Error(w, "Invalid start_year parameter", http.StatusBadRequest)
-		return
-	}
 
 	// Extract and validate the end year parameter from the query string
-	endYearStr := r.URL.Query().Get("end_year")
-	endYear, err := strconv.Atoi(endYearStr)
-	if err != nil || endYear <= 0 {
-		http.Error(w, "Invalid end_year parameter", http.StatusBadRequest)
+	yearStr := r.URL.Query().Get("year")
+	year, err := strconv.Atoi(yearStr)
+	if err != nil || year <= 0 {
+		http.Error(w, "Invalid year parameter", http.StatusBadRequest)
 		return
 	}
 
@@ -108,7 +101,7 @@ func (h *GasReviewHandler) GetRecoverableGasReservesSummary(w http.ResponseWrite
 	ctx := context.Background()
 
 	// Call the service function to get the recoverable gas reserves summary
-	summary, err := h.NgsReservesGasService.GetRecoverableGasReservesSummary(ctx, startYear, endYear)
+	summary, err := h.NgsReservesGasService.GetRecoverableGasReservesSummary(ctx, year)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

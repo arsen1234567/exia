@@ -12,7 +12,7 @@ type NgsReservesGasRepository struct {
 }
 
 // GetRecoverableGasReserves retrieves the total recoverable gas reserves for each year
-func (r *NgsReservesGasRepository) GetRecoverableGasReserves(ctx context.Context, startYear, endYear int) ([]models.RecoverableGasReservesSummary, error) {
+func (r *NgsReservesGasRepository) GetRecoverableGasReserves(ctx context.Context, year int) ([]models.RecoverableGasReservesSummary, error) {
 	query := `
 	SELECT 
 		EXTRACT(YEAR FROM n."Год") AS year,
@@ -22,7 +22,7 @@ func (r *NgsReservesGasRepository) GetRecoverableGasReserves(ctx context.Context
 	RIGHT JOIN 
 		dict.companies_1 c ON c.bin::text = n.bin
 	WHERE 
-		EXTRACT(YEAR FROM n."Год") BETWEEN $1 AND $2
+		EXTRACT(YEAR FROM n."Год") BETWEEN 1990 AND $1
 		AND n."Тип" = 'Извлекаемые'
 	GROUP BY 
 		EXTRACT(YEAR FROM n."Год")
@@ -30,7 +30,7 @@ func (r *NgsReservesGasRepository) GetRecoverableGasReserves(ctx context.Context
 		year;
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, startYear, endYear)
+	rows, err := r.Db.QueryContext(ctx, query, year)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
