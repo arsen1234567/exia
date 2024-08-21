@@ -35,6 +35,7 @@ jobs:
         password: ${{ secrets.VPS_PASSWORD }}
         port: 22
         script: |
+          cd ~/exia
           docker pull arsen333/exia:latest
           docker-compose down
           docker-compose up -d
