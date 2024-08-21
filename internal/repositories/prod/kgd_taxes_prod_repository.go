@@ -47,21 +47,22 @@ func (r *KgdTaxesProdRepository) GetKgdTaxesProdSummary(ctx context.Context, yea
 	return results, nil
 }
 
-func (r *KgdTaxesProdRepository) GetSummaAllTaxes(ctx context.Context, year int, currency string) (map[string]float64, error) {
+func (r *KgdTaxesProdRepository) GetSummaAllTaxes(ctx context.Context, year int, currency, reporttype string) (map[string]float64, error) {
 	query := `
     SELECT 
-        "Company",
-        COALESCE(SUM("summa"), 0) AS total_value
+        "name_short_ru",
+        COALESCE(SUM("TotalTaxes"), 0) AS total_value
     FROM 
-        prod.kgd_taxes_prod
+	dmart.investments_dash
     WHERE 
-        EXTRACT(YEAR FROM "receipt_date") = $1 AND
-        "currency" = $2 
+        "report_year" = $1 AND
+        "currencyunit" = $2 AND
+		"report_type" = $3
     GROUP BY 
-        "Company";
+        "name_short_ru";
     `
 
-	rows, err := r.Db.QueryContext(ctx, query, year, currency)
+	rows, err := r.Db.QueryContext(ctx, query, year, currency, reporttype)
 	if err != nil {
 		return nil, err
 	}

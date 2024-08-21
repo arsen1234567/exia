@@ -46,29 +46,37 @@ func getExchangeRate(amount float64) (float64, error) {
 	return data.Result, nil
 }
 
-func (s *SpecificTaxesService) GetSpecificTaxes(ctx context.Context, productionunit string, year int) (map[string]map[string]float64, error) {
-	totalSumSummary, err := s.Repo.GetSpecificTaxes(ctx, productionunit, year)
+func (s *SpecificTaxesService) GetSpecificTaxes(ctx context.Context, year int, currency, reporttype string) (map[string]float64, error) {
+
+	totalSumSummary, err := s.Repo.GetSpecificTaxes(ctx, year, currency, reporttype)
 	if err != nil {
 		return nil, err
 	}
-
-	var totalTaxAmount float64
-	for _, tax := range totalSumSummary {
-		totalTaxAmount += tax
-	}
-
-	exchangeRate, err := getExchangeRate(totalTaxAmount)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make(map[string]map[string]float64)
-	for name, tax := range totalSumSummary {
-		result[name] = map[string]float64{
-			"KZT": tax,
-			"USD": tax * exchangeRate / totalTaxAmount, // Calculate the equivalent in USD
-		}
-	}
-
-	return result, nil
+	return totalSumSummary, nil
 }
+
+// 	totalSumSummary, err := s.Repo.GetSpecificTaxes(ctx, productionunit, year, currency)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	var totalTaxAmount float64
+// 	for _, tax := range totalSumSummary {
+// 		totalTaxAmount += tax
+// 	}
+
+// 	exchangeRate, err := getExchangeRate(totalTaxAmount)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	result := make(map[string]map[string]float64)
+// 	for name, tax := range totalSumSummary {
+// 		result[name] = map[string]float64{
+// 			"KZT": tax,
+// 			"USD": tax * exchangeRate / totalTaxAmount, // Calculate the equivalent in USD
+// 		}
+// 	}
+
+// 	return result, nil
+// }

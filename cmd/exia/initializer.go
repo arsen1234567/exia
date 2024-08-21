@@ -9,13 +9,16 @@ import (
 	oilHandlers "tender/internal/handlers/oil"
 	dmartRepositories "tender/internal/repositories/dmart"
 	prodRepositories "tender/internal/repositories/prod"
+	publicRepositories "tender/internal/repositories/public"
 	rawDataRepositories "tender/internal/repositories/rawData"
 	dmartServices "tender/internal/services/dmart"
 	prodServices "tender/internal/services/prod"
+	publicServices "tender/internal/services/public"
 	rawDataServices "tender/internal/services/rawData"
 )
 
 type application struct {
+	oil_reserves_handler            *oilHandlers.OilReservesHandler
 	errorLog                        *log.Logger
 	infoLog                         *log.Logger
 	oil_review_handler              *oilHandlers.OilReviewHandler
@@ -30,6 +33,9 @@ type application struct {
 }
 
 func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
+
+	subsoil_geojson_repository := &publicRepositories.SubsoilGeojsonRepository{Db: db}
+	subsoil_geojson_service := &publicServices.SubsoilGeojsonService{Repo: subsoil_geojson_repository}
 
 	tax_burden_repository := &prodRepositories.TaxBurdenRepository{Db: db}
 	tax_burden_service := &prodServices.TaxBurdenService{Repo: tax_burden_repository}
@@ -125,6 +131,11 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		TaxBurdenService:       tax_burden_service,
 		KgdTaxesProdService:    kgd_taxes_prod_service,
 	}
+
+	oil_reserves_handler := &oilHandlers.OilReservesHandler{
+
+		SubsoilGeojsonService: subsoil_geojson_service,
+	}
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
 	// permissionHandler := &handlers.PermissionHandler{Service: permissionService}
@@ -142,6 +153,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	// expenseHandler := &handlers.PersonalExpenseHandler{Service: expenseService}
 
 	return &application{
+		oil_reserves_handler:            oil_reserves_handler,
 		errorLog:                        errorLog,
 		infoLog:                         infoLog,
 		gas_review_handler:              gas_review_handler,
