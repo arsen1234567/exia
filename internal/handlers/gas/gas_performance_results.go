@@ -8,12 +8,12 @@ import (
 	dmartServices "tender/internal/services/dmart"
 )
 
-type GasPerfomanceResultsHandler struct {
+type GasperformanceResultsHandler struct {
 	DfoQazaqgasService   *dmartServices.DfoQazaqgasService
 	DfoGgReportesService *dmartServices.DfoGgReportesService
 }
 
-func (h *GasPerfomanceResultsHandler) GetRevenueByServiceAndCompanyAndYear(w http.ResponseWriter, r *http.Request) {
+func (h *GasperformanceResultsHandler) GetRevenueByServiceAndCompanyAndYear(w http.ResponseWriter, r *http.Request) {
 	// Extract and validate the year parameter from the query string
 	yearStr := r.URL.Query().Get("year")
 	year, err := strconv.Atoi(yearStr)
@@ -46,7 +46,7 @@ func (h *GasPerfomanceResultsHandler) GetRevenueByServiceAndCompanyAndYear(w htt
 	}
 }
 
-func (h *GasPerfomanceResultsHandler) GetRevenueByGeographyAndCompanyAndYear(w http.ResponseWriter, r *http.Request) {
+func (h *GasperformanceResultsHandler) GetRevenueByGeographyAndCompanyAndYear(w http.ResponseWriter, r *http.Request) {
 	// Extract and validate the year parameter from the query string
 	yearStr := r.URL.Query().Get("year")
 	year, err := strconv.Atoi(yearStr)
@@ -79,7 +79,7 @@ func (h *GasPerfomanceResultsHandler) GetRevenueByGeographyAndCompanyAndYear(w h
 	}
 }
 
-func (h *GasPerfomanceResultsHandler) GetCostItemsByCompanyAndYear(w http.ResponseWriter, r *http.Request) {
+func (h *GasperformanceResultsHandler) GetCostItemsByCompanyAndYear(w http.ResponseWriter, r *http.Request) {
 	// Extract and validate the year parameter from the query string
 	yearStr := r.URL.Query().Get("year")
 	year, err := strconv.Atoi(yearStr)
@@ -112,7 +112,7 @@ func (h *GasPerfomanceResultsHandler) GetCostItemsByCompanyAndYear(w http.Respon
 	}
 }
 
-func (h *GasPerfomanceResultsHandler) GetRevenueByCompanyAndYear(w http.ResponseWriter, r *http.Request) {
+func (h *GasperformanceResultsHandler) GetRevenueByCompanyAndYear(w http.ResponseWriter, r *http.Request) {
 	// Extract and validate the year parameter from the query string
 	yearStr := r.URL.Query().Get("year")
 	year, err := strconv.Atoi(yearStr)
@@ -143,7 +143,7 @@ func (h *GasPerfomanceResultsHandler) GetRevenueByCompanyAndYear(w http.Response
 	w.Write([]byte(strconv.FormatFloat(totalRevenue, 'f', -1, 64)))
 }
 
-func (h *GasPerfomanceResultsHandler) GetCostOfGoodsWorksServicesSold(w http.ResponseWriter, r *http.Request) {
+func (h *GasperformanceResultsHandler) GetCostOfGoodsWorksServicesSold(w http.ResponseWriter, r *http.Request) {
 	// Extract and validate the year parameter from the query string
 	yearStr := r.URL.Query().Get("year")
 	year, err := strconv.Atoi(yearStr)
@@ -174,7 +174,7 @@ func (h *GasPerfomanceResultsHandler) GetCostOfGoodsWorksServicesSold(w http.Res
 	w.Write([]byte(strconv.FormatFloat(totalCost, 'f', -1, 64)))
 }
 
-func (h *GasPerfomanceResultsHandler) GetGrossProfit(w http.ResponseWriter, r *http.Request) {
+func (h *GasperformanceResultsHandler) GetGrossProfit(w http.ResponseWriter, r *http.Request) {
 	// Extract and validate the year parameter from the query string
 	yearStr := r.URL.Query().Get("year")
 	year, err := strconv.Atoi(yearStr)
@@ -205,7 +205,7 @@ func (h *GasPerfomanceResultsHandler) GetGrossProfit(w http.ResponseWriter, r *h
 	w.Write([]byte(strconv.FormatFloat(grossProfit, 'f', -1, 64)))
 }
 
-func (h *GasPerfomanceResultsHandler) GetCIT(w http.ResponseWriter, r *http.Request) {
+func (h *GasperformanceResultsHandler) GetCIT(w http.ResponseWriter, r *http.Request) {
 	// Extract and validate the year parameter from the query string
 	yearStr := r.URL.Query().Get("year")
 	year, err := strconv.Atoi(yearStr)

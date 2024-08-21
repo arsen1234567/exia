@@ -16,13 +16,13 @@ import (
 )
 
 type application struct {
-	errorLog                       *log.Logger
-	infoLog                        *log.Logger
-	oil_review_handler             *oilHandlers.OilReviewHandler
-	oil_perfomance_results_handler *oilHandlers.OilPerfomanceResultsHandler
-	gas_review_handler             *gasHandlers.GasReviewHandler
-	oil_benchmarking_handler       *oilHandlers.OilBenchmarkingHandler
-	gas_perfomance_results_handler *gasHandlers.GasPerfomanceResultsHandler
+	errorLog                        *log.Logger
+	infoLog                         *log.Logger
+	oil_review_handler              *oilHandlers.OilReviewHandler
+	oil_performance_results_handler *oilHandlers.OilperformanceResultsHandler
+	gas_review_handler              *gasHandlers.GasReviewHandler
+	oil_benchmarking_handler        *oilHandlers.OilBenchmarkingHandler
+	gas_performance_results_handler *gasHandlers.GasperformanceResultsHandler
 	// permissionHandler  *handlers.PermissionHandler
 	// companyHandler     *handlers.CompanyHandler
 	// transactionHandler *handlers.TransactionHandler
@@ -99,7 +99,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		StGasBalanceService:   st_gas_balance_service,
 	}
 
-	gas_perfomance_results_handler := &gasHandlers.GasPerfomanceResultsHandler{
+	gas_performance_results_handler := &gasHandlers.GasperformanceResultsHandler{
 		DfoQazaqgasService:   dfo_qazaqgas_service,
 		DfoGgReportesService: dfo_gg_reportes_service,
 	}
@@ -114,7 +114,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		InvestmentReviewForecastTotalService: investment_review_forecast_total_service,
 	}
 
-	oil_perfomance_results_handler := &oilHandlers.OilPerfomanceResultsHandler{
+	oil_performance_results_handler := &oilHandlers.OilperformanceResultsHandler{
 
 		InvestmentsDashService: investment_dash_service,
 	}
@@ -142,18 +142,18 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	// expenseHandler := &handlers.PersonalExpenseHandler{Service: expenseService}
 
 	return &application{
-		errorLog:                       errorLog,
-		infoLog:                        infoLog,
-		gas_review_handler:             gas_review_handler,
-		oil_review_handler:             oil_review_handler,
-		oil_perfomance_results_handler: oil_perfomance_results_handler,
-		oil_benchmarking_handler:       oil_benchmarking_handler,
+		errorLog:                        errorLog,
+		infoLog:                         infoLog,
+		gas_review_handler:              gas_review_handler,
+		oil_review_handler:              oil_review_handler,
+		oil_performance_results_handler: oil_performance_results_handler,
+		oil_benchmarking_handler:        oil_benchmarking_handler,
 		// permissionHandler:  permissionHandler,
 		// companyHandler:     companyHandler,
 		// transactionHandler: transactionHandler,
 		// expenseHandler:     expenseHandler,
 
-		gas_perfomance_results_handler: gas_perfomance_results_handler,
+		gas_performance_results_handler: gas_performance_results_handler,
 	}
 
 }

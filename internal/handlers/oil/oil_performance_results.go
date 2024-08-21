@@ -8,11 +8,11 @@ import (
 	dmartServices "tender/internal/services/dmart"
 )
 
-type OilPerfomanceResultsHandler struct {
+type OilperformanceResultsHandler struct {
 	InvestmentsDashService *dmartServices.InvestmentsDashService
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDash(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDash(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 
 	ctx := context.Background()
@@ -28,7 +28,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDash(w http.ResponseWriter, 
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashOilProduction(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashOilProduction(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -60,7 +60,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashOilProduction(w http.Res
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashSpecificRevenue(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashSpecificRevenue(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -92,7 +92,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashSpecificRevenue(w http.R
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashROA(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashROA(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -128,7 +128,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashROA(w http.ResponseWrite
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashNetProfitMargin(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashNetProfitMargin(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -169,7 +169,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashNetProfitMargin(w http.R
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashSpecificNetProfit(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashSpecificNetProfit(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -210,7 +210,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashSpecificNetProfit(w http
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashRevenue(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashRevenue(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -251,7 +251,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashRevenue(w http.ResponseW
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashOperatingProfit(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashOperatingProfit(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -292,7 +292,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashOperatingProfit(w http.R
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashEBITDA(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashEBITDA(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -333,7 +333,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashEBITDA(w http.ResponseWr
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashNetProfit(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashNetProfit(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -374,7 +374,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashNetProfit(w http.Respons
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashTotalTaxes(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashTotalTaxes(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -415,7 +415,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashTotalTaxes(w http.Respon
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashTaxBurden(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashTaxBurden(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -456,7 +456,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashTaxBurden(w http.Respons
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashSpecificTaxes(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashSpecificTaxes(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -497,7 +497,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashSpecificTaxes(w http.Res
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashAssets(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashAssets(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -538,7 +538,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashAssets(w http.ResponseWr
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashCapital(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashCapital(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
@@ -579,7 +579,7 @@ func (h *OilPerfomanceResultsHandler) GetInvestmentsDashCapital(w http.ResponseW
 	}
 }
 
-func (h *OilPerfomanceResultsHandler) GetInvestmentsDashLiabilities(w http.ResponseWriter, r *http.Request) {
+func (h *OilperformanceResultsHandler) GetInvestmentsDashLiabilities(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
