@@ -2,11 +2,47 @@ package services
 
 import (
 	"context" // Ensure this is correct
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 	repositories_dmart "tender/internal/repositories/dmart"
 )
 
 type InvestmentsDashService struct {
 	Repo *repositories_dmart.InvestmentsDashRepository
+}
+
+func getExchangeRate(amount float64) (float64, error) {
+	apiKey := "uBEwbRsUj1jy3mbTbiK6ta8lNakAgg14" // Your API key
+	url := fmt.Sprintf("https://api.apilayer.com/exchangerates_data/convert?to=USD&from=KZT&amount=%f", amount)
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return 0, err
+	}
+	req.Header.Set("apikey", apiKey)
+
+	res, err := client.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+
+	var data struct {
+		Result float64 `json:"result"`
+	}
+	if err := json.Unmarshal(body, &data); err != nil {
+		return 0, err
+	}
+
+	return data.Result, nil
 }
 
 func (s *InvestmentsDashService) GetInvestmentsDash(ctx context.Context, company string) (float64, error) {
@@ -143,7 +179,7 @@ func (s *InvestmentsDashService) GetInvestmentsDashSpecificNetProfitGraph(ctx co
 		return nil, err
 	}
 	return totalSumSummary, nil
-}
+} // s
 
 func (s *InvestmentsDashService) GetInvestmentsDashROAGraph(ctx context.Context, currencyunit, productionunit string, reportyear int) (map[string]float64, error) {
 	totalSumSummary, err := s.Repo.GetInvestmentsDashROAGraph(ctx, currencyunit, productionunit, reportyear)

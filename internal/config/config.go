@@ -4,35 +4,31 @@ import (
 	"log"
 	"os"
 
-	"gopkg.in/yaml.v2"
+	"github.com/joho/godotenv"
 )
 
-// Config structure to hold configuration values
 type Config struct {
 	Server struct {
-		Address string `yaml:"address"`
-	} `yaml:"server"`
+		Address string
+	}
 	Database struct {
-		Driver string `yaml:"driver"`
-		URL    string `yaml:"url"`
-	} `yaml:"database"`
+		Driver string
+		URL    string
+	}
 }
 
-// LoadConfig loads the configuration from config.yaml
 func LoadConfig() Config {
+	// Load .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	// Load config from environment variables
 	var cfg Config
-
-	// Read config file
-	data, err := os.ReadFile("/Users/bekenov/Downloads/tender-community-main/config/config.yaml")
-	if err != nil {
-		log.Fatalf("Failed to read config file: %v", err)
-	}
-
-	// Unmarshal YAML data into config struct
-	err = yaml.Unmarshal(data, &cfg)
-	if err != nil {
-		log.Fatalf("Failed to unmarshal config data: %v", err)
-	}
+	cfg.Server.Address = os.Getenv("SERVER_ADDRESS")
+	cfg.Database.Driver = os.Getenv("DB_DRIVER")
+	cfg.Database.URL = os.Getenv("DB_URL")
 
 	return cfg
 }
