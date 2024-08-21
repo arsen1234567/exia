@@ -46,3 +46,95 @@ func (r *DfoGgReportesRepository) GetNetProfitSummary(ctx context.Context) ([]mo
 
 	return results, nil
 }
+
+func (r *DfoGgReportesRepository) GetRevenueByCompanyAndYear(ctx context.Context, company string, year int) (float64, error) {
+	query := `
+	SELECT 
+		SUM(period_end) AS total_period_end
+	FROM 
+		dmart.dfo_qg_reports
+	WHERE 
+		item_en IN ('Revenue from sales of goods, works and services')
+		AND company = $1
+		AND report_year = $2
+	`
+
+	var totalPeriodEnd float64
+	err := r.Db.QueryRowContext(ctx, query, company, year).Scan(&totalPeriodEnd)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+		return 0, err
+	}
+
+	return totalPeriodEnd, nil
+}
+
+func (r *DfoGgReportesRepository) GetCostOfGoodsWorksServicesSold(ctx context.Context, company string, year int) (float64, error) {
+	query := `
+		SELECT 
+			SUM(period_end) AS total_period_end
+		FROM 
+			dmart.dfo_qg_reports 
+		WHERE 
+			item_en IN ('Cost of goods, works and services sold')
+			AND company = $1
+			AND report_year = $2
+	`
+
+	var totalCost float64
+	err := r.Db.QueryRowContext(ctx, query, company, year).Scan(&totalCost)
+	if err != nil {
+		return 0, err
+	}
+
+	return totalCost, nil
+}
+
+func (r *DfoGgReportesRepository) GetGrossProfit(ctx context.Context, company string, year int) (float64, error) {
+	query := `
+		SELECT 
+			SUM(period_end) AS total_period_end
+		FROM 
+			dmart.dfo_qg_reports 
+		WHERE 
+			item_en IN ('Gross profit (loss) (line 010 – line 011)')
+			AND company = $1
+			AND report_year = $2
+	`
+
+	var grossProfit float64
+	err := r.Db.QueryRowContext(ctx, query, company, year).Scan(&grossProfit)
+	if err != nil {
+		return 0, err
+	}
+
+	return grossProfit, nil
+}
+
+func (r *DfoGgReportesRepository) GetCIT(ctx context.Context, company string, year int) (float64, error) {
+	query := `
+		SELECT 
+			SUM(period_start) AS total_cit
+		FROM 
+			dmart.dfo_qg_reports dqr 
+		WHERE 
+			item_en IN ('Expenses (-) (income (+)) for income tax')
+			AND company = $1
+			AND report_year = $2
+		GROUP BY 
+			item_en;
+	`
+
+	var totalCIT float64
+	err := r.Db.QueryRowContext(ctx, query, company, year).Scan(&totalCIT)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+		return 0, err
+	}
+
+	return totalCIT, nil
+}

@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -29,6 +30,8 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
+	fmt.Println("database url", cfg.Database.URL)
+	log.Println("database url", cfg.Database.URL)
 	db, err := openDB(cfg.Database.URL)
 	if err != nil {
 		errorLog.Fatal(err)
