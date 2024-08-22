@@ -59,7 +59,7 @@ func (r *InvestmentReviewForecastStepsRepository) GetEbitdaToGrossRevenueRatio(c
 	return ebitdaToGrossRevenueRatio.Float64, nil
 }
 
-func (r *InvestmentReviewForecastStepsRepository) GetCompaniesForecastSteps(ctx context.Context) ([]models.InvestmentReviewForecastStepsSummary, error) {
+func (r *InvestmentReviewForecastStepsRepository) GetCompaniesForecastSteps(ctx context.Context, currency, unit string) ([]models.InvestmentReviewForecastStepsSummary, error) {
 	query := `
 	SELECT 
 	    "name_abbr", 
@@ -68,14 +68,16 @@ func (r *InvestmentReviewForecastStepsRepository) GetCompaniesForecastSteps(ctx 
 	FROM 
 	    dmart.investment_review_forecast_steps
 	WHERE 
-	    scenario IN ('Forecast BBrent BCPI')
+	    scenario IN ('Forecast BBrent BCPI') AND
+		currency = $1 AND
+		unit = $2
 	GROUP BY 
 	    "name_abbr", "Year"
 	ORDER BY
 	    "Year", "name_abbr"
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query)
+	rows, err := r.Db.QueryContext(ctx, query, currency, unit)
 	if err != nil {
 		return nil, err
 	}

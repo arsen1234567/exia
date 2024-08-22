@@ -56,6 +56,7 @@ func (h *OilReviewHandler) GetInvestmentOilProductionSummary(w http.ResponseWrit
 
 func (h *OilReviewHandler) GetKgdTaxesProd(w http.ResponseWriter, r *http.Request) {
 	yearStr := r.URL.Query().Get("year")
+	currency := r.URL.Query().Get("currency")
 	year, err := strconv.Atoi(yearStr)
 	if err != nil || year <= 0 {
 		http.Error(w, "Invalid year parameter", http.StatusBadRequest)
@@ -63,7 +64,7 @@ func (h *OilReviewHandler) GetKgdTaxesProd(w http.ResponseWriter, r *http.Reques
 	}
 
 	ctx := context.Background()
-	summary, err := h.KgdTaxesProdService.GetKgdTaxesProdSummary(ctx, year)
+	summary, err := h.KgdTaxesProdService.GetKgdTaxesProdSummary(ctx, year, currency)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -209,9 +210,12 @@ func (h *OilReviewHandler) GetInvestmentReviewForecastTotal(w http.ResponseWrite
 }
 
 func (h *OilReviewHandler) GetSpecOpEx(w http.ResponseWriter, r *http.Request) {
+	currency := r.URL.Query().Get("currency")
+
+	unit := r.URL.Query().Get("unit")
 	ctx := r.Context()
 
-	totalReserveMultiple, err := h.InvestPotentialMainService.GetSpecOpEx(ctx)
+	totalReserveMultiple, err := h.InvestPotentialMainService.GetSpecOpEx(ctx, currency, unit)
 	if err != nil {
 		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
 		log.Println("Error retrieving data:", err)
@@ -228,9 +232,14 @@ func (h *OilReviewHandler) GetSpecOpEx(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *OilReviewHandler) GetCompaniesForecastSteps(w http.ResponseWriter, r *http.Request) {
+
+	currency := r.URL.Query().Get("currency")
+
+	unit := r.URL.Query().Get("unit")
+
 	ctx := r.Context()
 
-	oilProductions, err := h.InvestmentReviewForecastStepsService.GetCompaniesForecastStepsSummary(ctx)
+	oilProductions, err := h.InvestmentReviewForecastStepsService.GetCompaniesForecastStepsSummary(ctx, currency, unit)
 	if err != nil {
 		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
 		log.Println("Error retrieving data:", err)
@@ -242,4 +251,3 @@ func (h *OilReviewHandler) GetCompaniesForecastSteps(w http.ResponseWriter, r *h
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
-
