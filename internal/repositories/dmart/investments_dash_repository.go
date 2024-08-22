@@ -16,7 +16,9 @@ func (r *InvestmentsDashRepository) GetInvestmentsDash(ctx context.Context, comp
 	FROM 
 		dmart.investments_dash
 	WHERE 
-		name_short_ru = $1;
+		name_short_ru = $1 AND
+		report_year = 2022 AND
+		report_type = 'Не консолидированный';
 	`
 
 	var totalBalance float64
