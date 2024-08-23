@@ -3,32 +3,56 @@ package repositories
 import (
 	"context"
 	"database/sql"
+	"log"
 )
 
 type InvestmentsDashRepository struct {
 	Db *sql.DB
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDash(ctx context.Context, company string) (float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDash(ctx context.Context, companyName, finReportType string, reportYear int) (map[int]float64, error) {
 	query := `
 	SELECT 
-		COALESCE(SUM("Balance(А+В+С1)" + "Balance(С2)"), 0) AS total_balance
+		"report_year",
+		COALESCE(SUM("Balance(А+В+С1)" + "Balance(С2)"), 0.0) AS total_balance
 	FROM 
 		dmart.investments_dash
 	WHERE 
-		name_short_ru = $1;
+		"name_short_en" = $1 AND
+		"report_type" = $2 AND
+		"report_year" <= $3 AND
+		"ProductionUnit" = 'barrels' AND
+		"currencyunit" = 'USD' 
+	GROUP BY 
+		"report_year"
+	ORDER BY 
+		"report_year";
 	`
 
-	var totalBalance float64
-	err := r.Db.QueryRowContext(ctx, query, company).Scan(&totalBalance)
+	rows, err := r.Db.QueryContext(ctx, query, companyName, finReportType, reportYear)
 	if err != nil {
-		return 0, err
+		return nil, err
+	}
+	defer rows.Close()
+
+	results := make(map[int]float64)
+	for rows.Next() {
+		var year int
+		var totalBalance float64
+		if err := rows.Scan(&year, &totalBalance); err != nil {
+			return nil, err
+		}
+		results[year] = totalBalance
 	}
 
-	return totalBalance, nil
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashOilProduction(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportYear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashOilProduction(ctx context.Context, companyname, productionunit, finreporttype string, reportYear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -36,18 +60,18 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashOilProduction(ctx context.
 	FROM 
 		dmart.investments_dash
 	WHERE 
-		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $1 AND
+		"ProductionUnit" = $2 AND
+		"report_type" = $3 AND
+		"report_year" <= $4 AND
+		"currencyunit" = 'KZT' 
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportYear)
+	rows, err := r.Db.QueryContext(ctx, query, companyname, productionunit, finreporttype, reportYear)
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +95,11 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashOilProduction(ctx context.
 }
 
 func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificRevenue(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+	log.Println("currencyunit ", currencyunit)
+	log.Println("companyname", companyname)
+	log.Println("productionunit", productionunit)
+	log.Println("reportyear", reportyear)
+	log.Println("finreporttype", finreporttype)
 	query := `
 	SELECT 
 		"report_year",
@@ -79,7 +108,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificRevenue(ctx contex
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
+		"name_short_en" = $2 AND
 		"ProductionUnit" = $3 AND
 		"report_type" = $4 AND
 		"report_year" <= $5
@@ -112,7 +141,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificRevenue(ctx contex
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashROA(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashROA(ctx context.Context, companyname, finreporttype string, reportyear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -120,18 +149,16 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashROA(ctx context.Context, c
 	FROM 
 		dmart.investments_dash
 	WHERE 
-		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $1 AND
+		"report_type" = $2 AND
+		"report_year" BETWEEN 2010 AND $3
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	rows, err := r.Db.QueryContext(ctx, query, companyname, finreporttype, reportyear)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +181,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashROA(ctx context.Context, c
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashNetProfitMargin(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashNetProfitMargin(ctx context.Context, companyname, finreporttype string, reportyear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -162,18 +189,16 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashNetProfitMargin(ctx contex
 	FROM 
 		dmart.investments_dash
 	WHERE 
-		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $1 AND
+		"report_type" = $2 AND
+		"report_year" <= $3
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	rows, err := r.Db.QueryContext(ctx, query, companyname, finreporttype, reportyear)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +230,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificNetProfit(ctx cont
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
+		"name_short_en" = $2 AND
 		"ProductionUnit" = $3 AND
 		"report_type" = $4 AND
 		"report_year" <= $5
@@ -238,7 +263,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificNetProfit(ctx cont
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashRevenue(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashRevenue(ctx context.Context, currencyunit, companyname, finreporttype string, reportyear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -247,17 +272,16 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashRevenue(ctx context.Contex
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $2 AND
+		"report_type" = $3 AND
+		"report_year" <= $4
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, finreporttype, reportyear)
 	if err != nil {
 		return nil, err
 	}
@@ -280,7 +304,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashRevenue(ctx context.Contex
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashOperatingProfit(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashOperatingProfit(ctx context.Context, currencyunit, companyname, finreporttype string, reportyear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -289,17 +313,18 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashOperatingProfit(ctx contex
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $2 AND
+		"report_type" = $3 AND
+		"ProductionUnit" = 'tons' AND
+		"report_year" <= $4
+		
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, finreporttype, reportyear)
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +347,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashOperatingProfit(ctx contex
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashEBITDA(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashEBITDA(ctx context.Context, currencyunit, companyname, finreporttype string, reportyear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -331,17 +356,17 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashEBITDA(ctx context.Context
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $2 AND
+		"ProductionUnit" = 'tons' AND
+		"report_type" = $3 AND
+		"report_year" <= $4
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, finreporttype, reportyear)
 	if err != nil {
 		return nil, err
 	}
@@ -364,7 +389,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashEBITDA(ctx context.Context
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashNetProfit(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportYear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashNetProfit(ctx context.Context, currencyunit, companyname, finreporttype string, reportYear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -373,17 +398,17 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashNetProfit(ctx context.Cont
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $2 AND
+		"ProductionUnit" = 'tons' AND
+		"report_type" = $3 AND
+		"report_year" <= $4
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportYear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, finreporttype, reportYear)
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +431,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashNetProfit(ctx context.Cont
 	return results, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashTotalTaxes(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportYear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashTotalTaxes(ctx context.Context, currencyunit, companyname, finreporttype string, reportYear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -415,17 +440,17 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashTotalTaxes(ctx context.Con
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $2 AND
+		"ProductionUnit" = 'tons' AND
+		"report_type" = $3 AND
+		"report_year" BETWEEN 2012 AND $4
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportYear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, finreporttype, reportYear)
 	if err != nil {
 		return nil, err
 	}
@@ -452,7 +477,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashTotalTaxes(ctx context.Con
 	return results, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashTaxBurden(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportyear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashTaxBurden(ctx context.Context, currencyunit, companyname, finreporttype string, reportyear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -461,17 +486,17 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashTaxBurden(ctx context.Cont
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $2 AND
+		"ProductionUnit" = 'tons' AND
+		"report_type" = $3 AND
+		"report_year" BETWEEN 2012 and $4
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportyear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, finreporttype, reportyear)
 	if err != nil {
 		return nil, err
 	}
@@ -503,10 +528,10 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificTaxes(ctx context.
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
+		"name_short_en" = $2 AND
 		"ProductionUnit" = $3 AND
 		"report_type" = $4 AND
-		"report_year" <= $5
+		"report_year" BETWEEN 2012 and $5
 	GROUP BY 
 		"report_year"
 	ORDER BY 
@@ -536,7 +561,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificTaxes(ctx context.
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashAssets(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportYear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashAssets(ctx context.Context, currencyunit, companyname, finreporttype string, reportYear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -545,17 +570,17 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashAssets(ctx context.Context
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $2 AND
+		"ProductionUnit" = 'tons' AND
+		"report_type" = $3 AND
+		"report_year" BETWEEN 2010 and $4
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportYear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, finreporttype, reportYear)
 	if err != nil {
 		return nil, err
 	}
@@ -578,7 +603,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashAssets(ctx context.Context
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashCapital(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportYear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashCapital(ctx context.Context, currencyunit, companyname, finreporttype string, reportYear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -587,17 +612,17 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashCapital(ctx context.Contex
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $2 AND
+		"ProductionUnit" = 'tons' AND
+		"report_type" = $3 AND
+		"report_year" <= $4
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportYear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, finreporttype, reportYear)
 	if err != nil {
 		return nil, err
 	}
@@ -624,7 +649,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashCapital(ctx context.Contex
 	return results, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashLiabilities(ctx context.Context, currencyunit, companyname, productionunit, finreporttype string, reportYear int) (map[int]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashLiabilities(ctx context.Context, currencyunit, companyname, finreporttype string, reportYear int) (map[int]float64, error) {
 	query := `
 	SELECT 
 		"report_year",
@@ -633,17 +658,17 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashLiabilities(ctx context.Co
 		dmart.investments_dash
 	WHERE 
 		"currencyunit" = $1 AND
-		"name_short_ru" = $2 AND
-		"ProductionUnit" = $3 AND
-		"report_type" = $4 AND
-		"report_year" <= $5
+		"name_short_en" = $2 AND
+		"ProductionUnit" = 'tons' AND
+		"report_type" = $3 AND
+		"report_year" <= $4
 	GROUP BY 
 		"report_year"
 	ORDER BY 
 		"report_year";
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, productionunit, finreporttype, reportYear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, companyname, finreporttype, reportYear)
 	if err != nil {
 		return nil, err
 	}
@@ -666,23 +691,24 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashLiabilities(ctx context.Co
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificNetProfitGraph(ctx context.Context, currencyunit, productionunit string, reportYear int) (map[string]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificNetProfitGraph(ctx context.Context, currencyunit, productionunit, reporttype string, reportYear int) (map[string]float64, error) {
 	query := `
     SELECT 
-        "name_short_ru",
+        "name_short_en",
         COALESCE(AVG(NULLIF("NetProfit", 0) / NULLIF("Production", 0)), 0) AS avg_net_profit_per_production
     FROM 
         dmart.investments_dash
     WHERE 
         "currencyunit" = $1 AND
         "ProductionUnit" = $2 AND
-        "report_year" = $3 AND
-        "report_type" = 'Не консолидированный'
+		"report_type" = $3 AND
+        "report_year" = $4
+        
     GROUP BY 
-        "name_short_ru";
+        "name_short_en";
     `
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, productionunit, reportYear)
+	rows, err := r.Db.QueryContext(ctx, query, currencyunit, productionunit, reporttype, reportYear)
 	if err != nil {
 		return nil, err
 	}
@@ -705,23 +731,21 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificNetProfitGraph(ctx
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashROAGraph(ctx context.Context, currencyunit, productionunit string, reportYear int) (map[string]float64, error) {
+func (r *InvestmentsDashRepository) GetInvestmentsDashROAGraph(ctx context.Context, reporttype string, reportYear int) (map[string]float64, error) {
 	query := `
     SELECT 
-        "name_short_ru",
+        "name_short_en",
         COALESCE(AVG(NULLIF("NetProfit", 0) / NULLIF(("ShortAssets" + "LongAssets" + "ShortAssetsSale"), 0)), 0) AS avg_roa
     FROM 
         dmart.investments_dash
     WHERE 
-        "currencyunit" = $1 AND
-        "ProductionUnit" = $2 AND
-        "report_year" = $3 AND
-        "report_type" = 'Не консолидированный'
+        "report_type" = $1 AND
+		"report_year" = $2
     GROUP BY 
-        "name_short_ru";
+        "name_short_en";
     `
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, productionunit, reportYear)
+	rows, err := r.Db.QueryContext(ctx, query, reporttype, reportYear)
 	if err != nil {
 		return nil, err
 	}

@@ -14,23 +14,38 @@ type OilperformanceResultsHandler struct {
 
 func (h *OilperformanceResultsHandler) GetInvestmentsDash(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
+	reportType := r.URL.Query().Get("reportType")
+	reportYear := r.URL.Query().Get("year")
+
+	// Parse the report year
+	year, err := strconv.Atoi(reportYear)
+	if err != nil {
+		http.Error(w, "Invalid year", http.StatusBadRequest)
+		return
+	}
+
+	if reportType != "Консолидированный" && reportType != "Не консолидированный" {
+		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
-	summary, err := h.InvestmentsDashService.GetInvestmentsDash(ctx, company)
+
+	// Fetch the data from the service
+	data, err := h.InvestmentsDashService.GetInvestmentsDash(ctx, company, reportType, year)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(summary); err != nil {
+	if err := json.NewEncoder(w).Encode(data); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
 
 func (h *OilperformanceResultsHandler) GetInvestmentsDashOilProduction(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
-	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
@@ -41,8 +56,8 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashOilProduction(w http.Re
 		return
 	}
 
-	if currencyunit != "KZT" && currencyunit != "USD" {
-		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
+	if productionunit != "barrels" && productionunit != "tons" && productionunit != "bpd" {
+		http.Error(w, "Invalid unit. Only 'barrels', 'pbd' and 'tons' are allowed.", http.StatusBadRequest)
 		return
 	}
 
@@ -52,7 +67,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashOilProduction(w http.Re
 	}
 
 	ctx := context.Background()
-	summary, err := h.InvestmentsDashService.GetInvestmentsDashOilProduction(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	summary, err := h.InvestmentsDashService.GetInvestmentsDashOilProduction(ctx, company, productionunit, finreporttype, reportyear)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -94,7 +109,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashSpecificRevenue(w http.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(summary); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
@@ -103,8 +117,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashSpecificRevenue(w http.
 
 func (h *OilperformanceResultsHandler) GetInvestmentsDashROA(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
-	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -119,18 +131,13 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashROA(w http.ResponseWrit
 		return
 	}
 
-	if currencyunit != "KZT" && currencyunit != "USD" {
-		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
-		return
-	}
-
 	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
 		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
 		return
 	}
 
 	ctx := context.Background()
-	summary, err := h.InvestmentsDashService.GetInvestmentsDashROA(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	summary, err := h.InvestmentsDashService.GetInvestmentsDashROA(ctx, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -144,8 +151,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashROA(w http.ResponseWrit
 
 func (h *OilperformanceResultsHandler) GetInvestmentsDashNetProfitMargin(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
-	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -160,18 +165,13 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashNetProfitMargin(w http.
 		return
 	}
 
-	if currencyunit != "KZT" && currencyunit != "USD" {
-		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
-		return
-	}
-
 	if finreporttype != "Консолидированный" && finreporttype != "Не консолидированный" {
 		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
 		return
 	}
 
 	ctx := context.Background()
-	summary, err := h.InvestmentsDashService.GetInvestmentsDashNetProfitMargin(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	summary, err := h.InvestmentsDashService.GetInvestmentsDashNetProfitMargin(ctx, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -227,7 +227,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashSpecificNetProfit(w htt
 func (h *OilperformanceResultsHandler) GetInvestmentsDashRevenue(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -253,7 +252,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashRevenue(w http.Response
 	}
 
 	ctx := context.Background()
-	revenueSummary, err := h.InvestmentsDashService.GetInvestmentsDashRevenue(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	revenueSummary, err := h.InvestmentsDashService.GetInvestmentsDashRevenue(ctx, currencyunit, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -268,7 +267,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashRevenue(w http.Response
 func (h *OilperformanceResultsHandler) GetInvestmentsDashOperatingProfit(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
+
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -294,7 +293,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashOperatingProfit(w http.
 	}
 
 	ctx := context.Background()
-	operatingProfitSummary, err := h.InvestmentsDashService.GetInvestmentsDashOperatingProfit(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	operatingProfitSummary, err := h.InvestmentsDashService.GetInvestmentsDashOperatingProfit(ctx, currencyunit, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -309,7 +308,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashOperatingProfit(w http.
 func (h *OilperformanceResultsHandler) GetInvestmentsDashEBITDA(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -334,7 +332,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashEBITDA(w http.ResponseW
 		return
 	}
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashEBITDA(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashEBITDA(ctx, currencyunit, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -349,7 +347,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashEBITDA(w http.ResponseW
 func (h *OilperformanceResultsHandler) GetInvestmentsDashNetProfit(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -375,7 +372,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashNetProfit(w http.Respon
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashNetProfit(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashNetProfit(ctx, currencyunit, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -390,7 +387,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashNetProfit(w http.Respon
 func (h *OilperformanceResultsHandler) GetInvestmentsDashTotalTaxes(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -415,7 +411,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashTotalTaxes(w http.Respo
 		return
 	}
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashTotalTaxes(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashTotalTaxes(ctx, currencyunit, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -430,7 +426,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashTotalTaxes(w http.Respo
 func (h *OilperformanceResultsHandler) GetInvestmentsDashTaxBurden(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -456,7 +451,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashTaxBurden(w http.Respon
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashTaxBurden(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashTaxBurden(ctx, currencyunit, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -512,7 +507,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashSpecificTaxes(w http.Re
 func (h *OilperformanceResultsHandler) GetInvestmentsDashAssets(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -538,7 +532,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashAssets(w http.ResponseW
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashAssets(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashAssets(ctx, currencyunit, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -553,7 +547,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashAssets(w http.ResponseW
 func (h *OilperformanceResultsHandler) GetInvestmentsDashCapital(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -579,7 +572,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashCapital(w http.Response
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashCapital(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashCapital(ctx, currencyunit, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -594,7 +587,6 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashCapital(w http.Response
 func (h *OilperformanceResultsHandler) GetInvestmentsDashLiabilities(w http.ResponseWriter, r *http.Request) {
 	company := r.URL.Query().Get("company")
 	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
 	finreporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
@@ -620,7 +612,7 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashLiabilities(w http.Resp
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashLiabilities(ctx, currencyunit, company, productionunit, finreporttype, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashLiabilities(ctx, currencyunit, company, finreporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

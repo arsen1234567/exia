@@ -12,7 +12,7 @@ type SpecificTaxesRepository struct {
 func (r *SpecificTaxesRepository) GetSpecificTaxes(ctx context.Context, year int, currency, reporttype string) (map[string]float64, error) {
 	query := `
     SELECT 
-        "name_short_ru",
+        "name_short_en",
         COALESCE(AVG("TotalTaxes" / NULLIF("Production", 0)), 0) AS average_specific_tax
     FROM 
         dmart.investments_dash
@@ -21,7 +21,7 @@ func (r *SpecificTaxesRepository) GetSpecificTaxes(ctx context.Context, year int
         "currencyunit" = $2 AND
         "report_type" = $3
     GROUP BY 
-        "name_short_ru";
+        "name_short_en";
 `
 	rows, err := r.Db.QueryContext(ctx, query, year, currency, reporttype)
 	if err != nil {

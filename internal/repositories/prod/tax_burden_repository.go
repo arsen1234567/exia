@@ -12,7 +12,7 @@ type TaxBurdenRepository struct {
 func (r *TaxBurdenRepository) GetTaxBurden(ctx context.Context, year int, currency string) (map[string]float64, error) {
 	query := `
     SELECT 
-        "Компания",
+        "Company",
         COALESCE(SUM("value"), 0) AS total_value
     FROM 
         prod.tax_burden
@@ -20,7 +20,7 @@ func (r *TaxBurdenRepository) GetTaxBurden(ctx context.Context, year int, curren
         "year" = $1 AND
         "currency" = $2 
     GROUP BY 
-        "Компания";
+        "Company";
     `
 
 	rows, err := r.Db.QueryContext(ctx, query, year, currency)

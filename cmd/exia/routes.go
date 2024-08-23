@@ -21,28 +21,28 @@ func (app *application) routes() http.Handler {
 	mux.Get("/api/oil/review/forecast/taxes", http.HandlerFunc(app.oil_review_handler.GetInvestmentReviewForecastTotal))    //  Investment_Review_Forecast_Total
 	mux.Get("/api/oil/review/forecast/specopex", http.HandlerFunc(app.oil_review_handler.GetSpecOpEx))
 
-	mux.Get("/api/oil/performance/investment-dash", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDash))
-	mux.Get("/api/oil/performance/oil-production", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashOilProduction))
-	mux.Get("/api/oil/performance/specific-revenue", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashSpecificRevenue))
+	mux.Get("/api/oil/performance/reserves", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDash))
+	mux.Get("/api/oil/performance/production", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashOilProduction))
+	mux.Get("/api/oil/performance/specific_revenue", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashSpecificRevenue))
+	mux.Get("/api/oil/performance/specific_net_profit", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashSpecificNetProfit))
 	mux.Get("/api/oil/performance/roa", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashROA))
-	mux.Get("/api/oil/performance/net-profit-margin", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashNetProfitMargin))
-	mux.Get("/api/oil/performance/specific-net-profit", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashSpecificNetProfit))
+	mux.Get("/api/oil/performance/net_profit_margin", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashNetProfitMargin))
 	mux.Get("/api/oil/performance/revenue", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashRevenue))
-	mux.Get("/api/oil/performance/operating-profit", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashOperatingProfit))
+	mux.Get("/api/oil/performance/operating_profit", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashOperatingProfit))
 	mux.Get("/api/oil/performance/ebitda", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashEBITDA))
-	mux.Get("/api/oil/performance/clear-profit", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashNetProfit))
-	mux.Get("/api/oil/performance/total-taxes", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashTotalTaxes))
-	mux.Get("/api/oil/performance/tax-burden", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashTaxBurden))
-	mux.Get("/api/oil/performance/specific-taxes", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashSpecificTaxes))
+	mux.Get("/api/oil/performance/net_profit", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashNetProfit))
+	mux.Get("/api/oil/performance/total_taxes", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashTotalTaxes))
+	mux.Get("/api/oil/performance/tax_burden", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashTaxBurden))
+	mux.Get("/api/oil/performance/specific_taxes", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashSpecificTaxes))
 	mux.Get("/api/oil/performance/assets", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashAssets))
-	mux.Get("/api/oil/performance/capital", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashCapital))
+	mux.Get("/api/oil/performance/equity", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashCapital))
 	mux.Get("/api/oil/performance/liabilities", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashLiabilities))
 
-	mux.Get("/api/oil/benchmarking/net-profit-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashSpecificNetProfitGraph)) // WORK
-	mux.Get("/api/oil/benchmarking/roa-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashROAGraph)) // WORK
-	mux.Get("/api/oil/benchmarking/specific-taxes-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetSpecificTaxesGraph)) // WORK
-	mux.Get("/api/oil/benchmarking/tax-burden-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetTaxBurdenGraph)) // WORK
-	mux.Get("/api/oil/benchmarking/summa-taxes-graph", http.HandlerFunc(app.oil_benchmarking_handler.GetSummaAllTaxes)) // WORK
+	mux.Get("/api/oil/benchmarking/specific_net_profit", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashSpecificNetProfitGraph)) // WORK
+	mux.Get("/api/oil/benchmarking/roa", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashROAGraph))                               // WORK
+	mux.Get("/api/oil/benchmarking/specific_taxes", http.HandlerFunc(app.oil_benchmarking_handler.GetSpecificTaxesGraph))                         // WORK
+	mux.Get("/api/oil/benchmarking/tax_burden_graph", http.HandlerFunc(app.oil_benchmarking_handler.GetTaxBurdenGraph))                           // WORK
+	mux.Get("/api/oil/benchmarking/sum_taxes", http.HandlerFunc(app.oil_benchmarking_handler.GetSummaAllTaxes))                                   // WORK
 
 	mux.Get("/api/oil/reserves/subsoil_geojson", http.HandlerFunc(app.oil_reserves_handler.GetSubsoilGeojson))
 

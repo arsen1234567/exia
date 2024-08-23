@@ -20,6 +20,12 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
 	reportyear_str := r.URL.Query().Get("year")
+	reporttype := r.URL.Query().Get("reportType")
+
+	if reporttype == "" {
+		http.Error(w, "Report type is required.", http.StatusBadRequest)
+		return
+	}
 
 	if reportyear_str == "" {
 		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
@@ -38,7 +44,7 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashSpecificNetProfitGraph(ctx, currencyunit, productionunit, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashSpecificNetProfitGraph(ctx, currencyunit, productionunit, reporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -51,8 +57,7 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 }
 
 func (h *OilBenchmarkingHandler) GetInvestmentsDashROAGraph(w http.ResponseWriter, r *http.Request) {
-	currencyunit := r.URL.Query().Get("currency")
-	productionunit := r.URL.Query().Get("unit")
+	reporttype := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
 	if reportyear_str == "" {
@@ -66,13 +71,8 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashROAGraph(w http.ResponseWrite
 		return
 	}
 
-	if currencyunit != "KZT" && currencyunit != "USD" {
-		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
-		return
-	}
-
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashROAGraph(ctx, currencyunit, productionunit, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashROAGraph(ctx, reporttype, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -88,7 +88,7 @@ func (h *OilBenchmarkingHandler) GetSpecificTaxesGraph(w http.ResponseWriter, r 
 
 	reportyear_str := r.URL.Query().Get("year")
 	currencyunit := r.URL.Query().Get("currency")
-	reporttype := r.URL.Query().Get("reporttype")
+	reporttype := r.URL.Query().Get("reportType")
 
 	if reportyear_str == "" {
 		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
@@ -162,7 +162,7 @@ func (h *OilBenchmarkingHandler) GetSummaAllTaxes(w http.ResponseWriter, r *http
 
 	year_str := r.URL.Query().Get("year")
 	currency := r.URL.Query().Get("currency")
-	reporttype := r.URL.Query().Get("reporttype")
+	reporttype := r.URL.Query().Get("reportType")
 
 	if year_str == "" {
 		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
