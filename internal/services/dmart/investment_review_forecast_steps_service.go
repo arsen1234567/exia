@@ -26,8 +26,8 @@ func (s *InvestmentReviewForecastStepsService) GetEbitdaToGrossRevenueRatio(ctx 
 	return summary, nil
 }
 
-func (s *InvestmentReviewForecastStepsService) GetCompaniesForecastStepsSummary(ctx context.Context) ([]models.InvestmentReviewForecastStepsSummary, error) {
-	summary, err := s.Repo.GetCompaniesForecastSteps(ctx)
+func (s *InvestmentReviewForecastStepsService) GetCompaniesForecastStepsSummary(ctx context.Context, currency, unit string) ([]models.InvestmentReviewForecastStepsSummary, error) {
+	summary, err := s.Repo.GetCompaniesForecastSteps(ctx, currency, unit)
 	if err != nil {
 		return nil, err
 	}
