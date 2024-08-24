@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 	dmartServices "tender/internal/services/dmart"
@@ -230,6 +231,8 @@ func (h *GasperformanceResultsHandler) GetCIT(w http.ResponseWriter, r *http.Req
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	log.Printf("totalCIT type: %T, value: %v", totalCIT, totalCIT)
+	log.Print("totalCIT", totalCIT)
 
 	// Set the Content-Type header and encode the float64 result as JSON
 	w.Header().Set("Content-Type", "application/json")
