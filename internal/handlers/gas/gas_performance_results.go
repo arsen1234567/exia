@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 	dmartServices "tender/internal/services/dmart"
@@ -74,7 +73,6 @@ func (h *GasperformanceResultsHandler) GetRevenueByGeographyAndCompanyAndYear(w 
 	}
 
 	// Set the Content-Type header and encode the response as JSON
-	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(summary); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
@@ -139,9 +137,9 @@ func (h *GasperformanceResultsHandler) GetRevenueByCompanyAndYear(w http.Respons
 		return
 	}
 
-	// Set the Content-Type header and write the raw value to the response
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte(strconv.FormatFloat(totalRevenue, 'f', -1, 64)))
+	if err := json.NewEncoder(w).Encode(totalRevenue); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 func (h *GasperformanceResultsHandler) GetCostOfGoodsWorksServicesSold(w http.ResponseWriter, r *http.Request) {
@@ -169,10 +167,12 @@ func (h *GasperformanceResultsHandler) GetCostOfGoodsWorksServicesSold(w http.Re
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 
-	// Set the Content-Type header and write the raw value to the response
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte(strconv.FormatFloat(totalCost, 'f', -1, 64)))
+	if err := json.NewEncoder(w).Encode(totalCost); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+
 }
 
 func (h *GasperformanceResultsHandler) GetGrossProfit(w http.ResponseWriter, r *http.Request) {
@@ -201,9 +201,11 @@ func (h *GasperformanceResultsHandler) GetGrossProfit(w http.ResponseWriter, r *
 		return
 	}
 
-	// Set the Content-Type header and write the raw value to the response
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte(strconv.FormatFloat(grossProfit, 'f', -1, 64)))
+	// Set the Content-Type header and encode the float64 result as JSON
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(grossProfit); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 func (h *GasperformanceResultsHandler) GetCIT(w http.ResponseWriter, r *http.Request) {
@@ -231,8 +233,6 @@ func (h *GasperformanceResultsHandler) GetCIT(w http.ResponseWriter, r *http.Req
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Printf("totalCIT type: %T, value: %v", totalCIT, totalCIT)
-	log.Print("totalCIT", totalCIT)
 
 	// Set the Content-Type header and encode the float64 result as JSON
 	w.Header().Set("Content-Type", "application/json")
