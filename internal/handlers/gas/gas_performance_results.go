@@ -231,15 +231,9 @@ func (h *GasperformanceResultsHandler) GetCIT(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	// Convert the result to JSON
-	response := map[string]float64{"totalCIT": totalCIT}
-	jsonResponse, err := json.Marshal(response)
-	if err != nil {
-		http.Error(w, "Failed to convert result to JSON", http.StatusInternalServerError)
-		return
-	}
-
-	// Set the Content-Type header and write the JSON response to the client
+	// Set the Content-Type header and encode the float64 result as JSON
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonResponse)
+	if err := json.NewEncoder(w).Encode(totalCIT); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
