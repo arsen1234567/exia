@@ -141,14 +141,9 @@ func (h *OilReviewHandler) GetInvestPotentialMainHandler(w http.ResponseWriter, 
 		return
 	}
 
-	// Set the content type to plain text
-	w.Header().Set("Content-Type", "text/plain")
-
-	// Convert float64 to string without scientific notation
-	output := fmt.Sprintf("%.2f", totalReserveMultiple) // Adjust the precision if needed
-	if _, err := w.Write([]byte(output)); err != nil {
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-		log.Println("Error writing response:", err)
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(totalReserveMultiple); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
 
@@ -162,12 +157,9 @@ func (h *OilReviewHandler) GetInvestmentReviewForecastStepsSummary(w http.Respon
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-
-	output := fmt.Sprintf("%.2f", totalReserveMultiple)
-	if _, err := w.Write([]byte(output)); err != nil {
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-		log.Println("Error writing response:", err)
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(totalReserveMultiple); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
 
@@ -181,12 +173,9 @@ func (h *OilReviewHandler) GetEbitdaToGrossRevenueRatio(w http.ResponseWriter, r
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-
-	output := fmt.Sprintf("%f", totalReserveMultiple)
-	if _, err := w.Write([]byte(output)); err != nil {
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-		log.Println("Error writing response:", err)
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(totalReserveMultiple); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
 
@@ -200,12 +189,9 @@ func (h *OilReviewHandler) GetInvestmentReviewForecastTotal(w http.ResponseWrite
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-
-	output := fmt.Sprintf("%f", totalReserveMultiple)
-	if _, err := w.Write([]byte(output)); err != nil {
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-		log.Println("Error writing response:", err)
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(totalReserveMultiple); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
 
