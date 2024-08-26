@@ -13,17 +13,17 @@ type KgdTaxesProdRepository struct {
 func (r *KgdTaxesProdRepository) GetKgdTaxesProdSummary(ctx context.Context, year int, currency string) ([]models.KgdTaxesProdSummary, error) {
 	query := `
 	SELECT 
-    SUM(summa) AS total_value, 
-    EXTRACT(YEAR FROM receipt_date) AS receipt_year
+		SUM(summa) AS total_value, 
+		EXTRACT(YEAR FROM receipt_date) AS receipt_year
 	FROM 
-    prod.kgd_taxes_prod 
+		prod.kgd_taxes_prod 
 	WHERE 
-    EXTRACT(YEAR FROM receipt_date) BETWEEN 2015 AND LEAST($1, 2023)  AND
-	"currency" = $2
+		EXTRACT(YEAR FROM receipt_date) BETWEEN 2015 AND LEAST($1, 2023) AND
+		currency = $2
 	GROUP BY 
-    receipt_year
+		receipt_year
 	ORDER BY 
-    receipt_year;
+		receipt_year;
 `
 
 	rows, err := r.Db.QueryContext(ctx, query, year, currency)
@@ -32,7 +32,7 @@ func (r *KgdTaxesProdRepository) GetKgdTaxesProdSummary(ctx context.Context, yea
 	}
 	defer rows.Close()
 
-	var results []models.KgdTaxesProdSummary
+	results := make([]models.KgdTaxesProdSummary, 0)
 	for rows.Next() {
 		var summary models.KgdTaxesProdSummary
 		if err := rows.Scan(&summary.TotalValue, &summary.Year); err != nil {
