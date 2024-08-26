@@ -137,6 +137,7 @@ func (h *GasperformanceResultsHandler) GetRevenueByCompanyAndYear(w http.Respons
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(totalRevenue); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
