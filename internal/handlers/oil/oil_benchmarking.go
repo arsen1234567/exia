@@ -20,10 +20,16 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 	currencyunit := r.URL.Query().Get("currency")
 	productionunit := r.URL.Query().Get("unit")
 	reportyear_str := r.URL.Query().Get("year")
-	reporttype := r.URL.Query().Get("reportType")
+	reportType := r.URL.Query().Get("reportType")
 
-	if reporttype == "" {
-		http.Error(w, "Report type is required.", http.StatusBadRequest)
+	var reportTypeString string
+	switch reportType {
+	case "1":
+		reportTypeString = "Консолидированный"
+	case "0":
+		reportTypeString = "Не консолидированный"
+	default:
+		http.Error(w, "Invalid report type. Only '1' (Консолидированный) and '0' (Не консолидированный) are allowed.", http.StatusBadRequest)
 		return
 	}
 
@@ -44,7 +50,7 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashSpecificNetProfitGraph(ctx, currencyunit, productionunit, reporttype, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashSpecificNetProfitGraph(ctx, currencyunit, productionunit, reportTypeString, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -57,7 +63,7 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 }
 
 func (h *OilBenchmarkingHandler) GetInvestmentsDashROAGraph(w http.ResponseWriter, r *http.Request) {
-	reporttype := r.URL.Query().Get("reportType")
+	reportType := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
 
 	if reportyear_str == "" {
@@ -70,9 +76,19 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashROAGraph(w http.ResponseWrite
 		http.Error(w, "Invalid year parameter. Must be an integer.", http.StatusBadRequest)
 		return
 	}
+	var reportTypeString string
+	switch reportType {
+	case "1":
+		reportTypeString = "Консолидированный"
+	case "0":
+		reportTypeString = "Не консолидированный"
+	default:
+		http.Error(w, "Invalid report type. Only '1' (Консолидированный) and '0' (Не консолидированный) are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashROAGraph(ctx, reporttype, reportyear)
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashROAGraph(ctx, reportTypeString, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -88,7 +104,7 @@ func (h *OilBenchmarkingHandler) GetSpecificTaxesGraph(w http.ResponseWriter, r 
 
 	reportyear_str := r.URL.Query().Get("year")
 	currencyunit := r.URL.Query().Get("currency")
-	reporttype := r.URL.Query().Get("reportType")
+	reportType := r.URL.Query().Get("reportType")
 
 	if reportyear_str == "" {
 		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
@@ -106,13 +122,19 @@ func (h *OilBenchmarkingHandler) GetSpecificTaxesGraph(w http.ResponseWriter, r 
 		return
 	}
 
-	if reporttype != "Консолидированный" && reporttype != "Не консолидированный" {
-		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+	var reportTypeString string
+	switch reportType {
+	case "1":
+		reportTypeString = "Консолидированный"
+	case "0":
+		reportTypeString = "Не консолидированный"
+	default:
+		http.Error(w, "Invalid report type. Only '1' (Консолидированный) and '0' (Не консолидированный) are allowed.", http.StatusBadRequest)
 		return
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.SpecificTaxesService.GetSpecificTaxes(ctx, reportyear, currencyunit, reporttype)
+	totalSumSummary, err := h.SpecificTaxesService.GetSpecificTaxes(ctx, reportyear, currencyunit, reportTypeString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -162,7 +184,7 @@ func (h *OilBenchmarkingHandler) GetSummaAllTaxes(w http.ResponseWriter, r *http
 
 	year_str := r.URL.Query().Get("year")
 	currency := r.URL.Query().Get("currency")
-	reporttype := r.URL.Query().Get("reportType")
+	reportType := r.URL.Query().Get("reportType")
 
 	if year_str == "" {
 		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
@@ -180,13 +202,19 @@ func (h *OilBenchmarkingHandler) GetSummaAllTaxes(w http.ResponseWriter, r *http
 		return
 	}
 
-	if reporttype != "Консолидированный" && reporttype != "Не консолидированный" {
-		http.Error(w, "Invalid report type. Only 'Консолидированный' and 'Не консолидированный' are allowed.", http.StatusBadRequest)
+	var reportTypeString string
+	switch reportType {
+	case "1":
+		reportTypeString = "Консолидированный"
+	case "0":
+		reportTypeString = "Не консолидированный"
+	default:
+		http.Error(w, "Invalid report type. Only '1' (Консолидированный) and '0' (Не консолидированный) are allowed.", http.StatusBadRequest)
 		return
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.KgdTaxesProdService.GetSummaAllTaxes(ctx, year, currency, reporttype)
+	totalSumSummary, err := h.KgdTaxesProdService.GetSummaAllTaxes(ctx, year, currency, reportTypeString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
