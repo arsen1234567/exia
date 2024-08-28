@@ -72,7 +72,7 @@ func (h *GasperformanceResultsHandler) GetRevenueByGeographyAndCompanyAndYear(w 
 		return
 	}
 
-	// Set the Content-Type header and encode the response as JSON
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(summary); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}

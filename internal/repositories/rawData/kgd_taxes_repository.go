@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"database/sql"
+	"log"
 	models "tender/internal/models/rawData"
 )
 
@@ -11,6 +12,8 @@ type KgdTaxesRepository struct {
 }
 
 func (r *KgdTaxesRepository) GetKgdTaxesSummary(ctx context.Context, year int, currency string) ([]models.KgdTaxesSummary, error) {
+	log.Println("currency", currency)
+	log.Println("year", year)
 	query := `
 	SELECT 
 		EXTRACT(YEAR FROM receipt_date) AS year,
