@@ -11,8 +11,8 @@ type InvestmentNetProfitService struct {
 }
 
 // GetInvestmentOilProductionSummary retrieves a summary of investment oil production for a specific year.
-func (s *InvestmentNetProfitService) GetInvestmentNetProfitSummary(ctx context.Context, year int) ([]models.InvestmentNetProfitSummary, error) {
-	summary, err := s.Repo.GetInvestmentNetProfitSummary(ctx, year)
+func (s *InvestmentNetProfitService) GetInvestmentNetProfitSummary(ctx context.Context, currency string, year int) ([]models.InvestmentNetProfitSummary, error) {
+	summary, err := s.Repo.GetInvestmentNetProfitSummary(ctx, currency, year)
 	if err != nil {
 		return nil, err
 	}

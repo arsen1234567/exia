@@ -117,8 +117,14 @@ func (h *OilReviewHandler) GetInvestmentNetProfitSummary(w http.ResponseWriter, 
 		return
 	}
 
+	currency := r.URL.Query().Get("currency")
+	if currency != "USD" && currency != "KZT" {
+		http.Error(w, "Invalid currency, must be USD or KZT", http.StatusBadRequest)
+		return
+	}
+
 	ctx := context.Background()
-	summary, err := h.InvestmentNetProfitService.GetInvestmentNetProfitSummary(ctx, year)
+	summary, err := h.InvestmentNetProfitService.GetInvestmentNetProfitSummary(ctx, currency, year)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

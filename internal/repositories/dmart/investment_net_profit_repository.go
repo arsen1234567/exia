@@ -10,21 +10,22 @@ type InvestmentNetProfitRepository struct {
 	Db *sql.DB
 }
 
-func (r *InvestmentNetProfitRepository) GetInvestmentNetProfitSummary(ctx context.Context, year int) ([]models.InvestmentNetProfitSummary, error) {
+func (r *InvestmentNetProfitRepository) GetInvestmentNetProfitSummary(ctx context.Context, currency string, year int) ([]models.InvestmentNetProfitSummary, error) {
 	query := `
 	SELECT 
-    "Year",
+    	"Year",
     SUM("NetProfit") AS total_sum
-FROM 
-    dmart.investment_net_profit
-WHERE 
-    "Year" BETWEEN 2008 AND $1
-GROUP BY 
-    "Year"
-ORDER BY 
-    "Year";
+	FROM 
+    	dmart.investment_net_profit
+	WHERE 
+    	"Year" BETWEEN 2008 AND $1
+		AND currency = $2
+	GROUP BY 
+    	"Year"
+	ORDER BY 
+    	"Year";
 `
-	rows, err := r.Db.QueryContext(ctx, query, year)
+	rows, err := r.Db.QueryContext(ctx, query, year, currency)
 	if err != nil {
 		return nil, err
 	}
