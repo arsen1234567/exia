@@ -10,18 +10,19 @@ type GasStepsRepository struct {
 	Db *sql.DB
 }
 
-func (r *GasStepsRepository) GetAmountOfPredictedTaxes(ctx context.Context) (float64, error) {
+func (r *GasStepsRepository) GetAmountOfPredictedTaxes(ctx context.Context, currency string) (float64, error) {
 	query := `
     SELECT 
         SUM(kpn_total) AS total_kpn
     FROM 
         prod.gas_steps 
     WHERE 
-        username = 'a.sagynayev@kazenergy.com'
+        username = 'a.sagynayev@kazenergy.com' AND
+		currency = $1
     `
 
 	var totalKpn sql.NullFloat64
-	err := r.Db.QueryRowContext(ctx, query).Scan(&totalKpn)
+	err := r.Db.QueryRowContext(ctx, query, currency).Scan(&totalKpn)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return 0, nil

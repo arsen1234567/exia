@@ -11,7 +11,7 @@ type InvestmentReviewForecastStepsRepository struct {
 	Db *sql.DB
 }
 
-func (r *InvestmentReviewForecastStepsRepository) GetInvestmentReviewForecastSteps(ctx context.Context) (float64, error) {
+func (r *InvestmentReviewForecastStepsRepository) GetInvestmentReviewForecastSteps(ctx context.Context, currency string) (float64, error) {
 	query := `
 	SELECT 
 	    SUM("GovShare") AS total_gov_share
@@ -19,11 +19,12 @@ func (r *InvestmentReviewForecastStepsRepository) GetInvestmentReviewForecastSte
 	    dmart.investment_review_forecast_steps
 	WHERE 
 	    scenario IN ('Forecast BBrent BCPI')
-	    AND "Year" IN (2023, 2024, 2025, 2026, 2027, 2028);
+	    AND "Year" IN (2023, 2024, 2025, 2026, 2027, 2028)
+		AND currency = $1;
 	`
 
 	var totalGovShare sql.NullFloat64
-	err := r.Db.QueryRowContext(ctx, query).Scan(&totalGovShare)
+	err := r.Db.QueryRowContext(ctx, query, currency).Scan(&totalGovShare)
 	if err != nil {
 		return 0, err
 	}
@@ -59,25 +60,24 @@ func (r *InvestmentReviewForecastStepsRepository) GetEbitdaToGrossRevenueRatio(c
 	return ebitdaToGrossRevenueRatio.Float64, nil
 }
 
-func (r *InvestmentReviewForecastStepsRepository) GetCompaniesForecastSteps(ctx context.Context, currency, unit string) ([]models.InvestmentReviewForecastStepsSummary, error) {
+func (r *InvestmentReviewForecastStepsRepository) GetCompaniesForecastSteps(ctx context.Context, unit string) ([]models.InvestmentReviewForecastStepsSummary, error) {
 	query := `
 	SELECT 
-	    "name_abbr", 
+	    "name_short_en", 
 	    "Year",
 	    SUM("OilProduction") AS OilProduction
 	FROM 
 	    dmart.investment_review_forecast_steps
 	WHERE 
 	    scenario IN ('Forecast BBrent BCPI') AND
-		currency = $1 AND
-		unit = $2
+		unit = $1
 	GROUP BY 
-	    "name_abbr", "Year"
+		"name_short_en", "Year"
 	ORDER BY
-	    "Year", "name_abbr"
+	    "Year", "name_short_en"
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, currency, unit)
+	rows, err := r.Db.QueryContext(ctx, query, unit)
 	if err != nil {
 		return nil, err
 	}

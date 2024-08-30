@@ -17,8 +17,8 @@ func (s *InvestPotentialMainService) GetInvestPotentialMain(ctx context.Context)
 	return summary, nil
 }
 
-func (s *InvestPotentialMainService) GetSpecOpEx(ctx context.Context, currency, unit string) (float64, error) {
-	summary, err := s.Repo.GetSpecOpEx(ctx, currency, unit)
+func (s *InvestPotentialMainService) GetSpecOpEx(ctx context.Context, currency string) (float64, error) {
+	summary, err := s.Repo.GetSpecOpEx(ctx, currency)
 	if err != nil {
 		return 0, err
 	}

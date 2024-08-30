@@ -71,6 +71,11 @@ func (h *GasReviewHandler) GetKgdTaxesSummary(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	if currency != "USD" && currency != "KZT" {
+		http.Error(w, "Invalid currency, nust be USD or KZT", http.StatusBadRequest)
+		return
+	}
+
 	// Create a context for the request
 	ctx := context.Background()
 
@@ -155,8 +160,14 @@ func (h *GasReviewHandler) GetAmountOfPredictedTaxes(w http.ResponseWriter, r *h
 	// Create a context for the request
 	ctx := context.Background()
 
+	currency := r.URL.Query().Get("currency")
+
+	if currency != "USD" && currency != "KZT" {
+		http.Error(w, "Invalid currency, nust be USD or KZT", http.StatusBadRequest)
+		return
+	}
 	// Call the service function to get the amount of predicted taxes
-	amountOfPredictedTaxes, err := h.GasStepsService.GetAmountOfPredictedTaxes(ctx)
+	amountOfPredictedTaxes, err := h.GasStepsService.GetAmountOfPredictedTaxes(ctx, currency)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -170,17 +181,21 @@ func (h *GasReviewHandler) GetAmountOfPredictedTaxes(w http.ResponseWriter, r *h
 }
 
 func (h *GasReviewHandler) GetNPVplusTV(w http.ResponseWriter, r *http.Request) {
-	// Create a context for the request
 	ctx := context.Background()
 
-	// Call the service function to get the NPV plus Terminal Value
-	totalNPVplusTV, err := h.GasTotalsService.GetNPVplusTV(ctx)
+	currency := r.URL.Query().Get("currency")
+
+	if currency != "USD" && currency != "KZT" {
+		http.Error(w, "Invalid currecy, must be USD or KZT", http.StatusBadRequest)
+		return
+	}
+
+	totalNPVplusTV, err := h.GasTotalsService.GetNPVplusTV(ctx, currency)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Set the Content-Type header and encode the response as JSON
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(totalNPVplusTV); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)

@@ -10,8 +10,8 @@ type InvestmentReviewForecastStepsService struct {
 	Repo *repositories_dmart.InvestmentReviewForecastStepsRepository
 }
 
-func (s *InvestmentReviewForecastStepsService) GetInvestmentReviewForecastSteps(ctx context.Context) (float64, error) {
-	summary, err := s.Repo.GetInvestmentReviewForecastSteps(ctx)
+func (s *InvestmentReviewForecastStepsService) GetInvestmentReviewForecastSteps(ctx context.Context, currency string) (float64, error) {
+	summary, err := s.Repo.GetInvestmentReviewForecastSteps(ctx, currency)
 	if err != nil {
 		return 0, err
 	}
@@ -26,8 +26,8 @@ func (s *InvestmentReviewForecastStepsService) GetEbitdaToGrossRevenueRatio(ctx 
 	return summary, nil
 }
 
-func (s *InvestmentReviewForecastStepsService) GetCompaniesForecastStepsSummary(ctx context.Context, currency, unit string) ([]models.InvestmentReviewForecastStepsSummary, error) {
-	summary, err := s.Repo.GetCompaniesForecastSteps(ctx, currency, unit)
+func (s *InvestmentReviewForecastStepsService) GetCompaniesForecastStepsSummary(ctx context.Context, unit string) ([]models.InvestmentReviewForecastStepsSummary, error) {
+	summary, err := s.Repo.GetCompaniesForecastSteps(ctx, unit)
 	if err != nil {
 		return nil, err
 	}

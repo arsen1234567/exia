@@ -10,8 +10,8 @@ type GasStepsService struct {
 }
 
 // GetTotalKpnByUsername retrieves the total KPN for a given username using the repository
-func (s *GasStepsService) GetAmountOfPredictedTaxes(ctx context.Context) (float64, error) {
-	return s.Repo.GetAmountOfPredictedTaxes(ctx)
+func (s *GasStepsService) GetAmountOfPredictedTaxes(ctx context.Context, currency string) (float64, error) {
+	return s.Repo.GetAmountOfPredictedTaxes(ctx, currency)
 }
 
 func (s *GasStepsService) GetEBITDAmargin(ctx context.Context) (float64, error) {

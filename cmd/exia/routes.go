@@ -15,10 +15,10 @@ func (app *application) routes() http.Handler {
 	mux.Get("/api/oil/review/financial_indicators/investment_profit", http.HandlerFunc(app.oil_review_handler.GetInvestmentNetProfitSummary))
 
 	mux.Get("/api/oil/review/forecast/reserves", http.HandlerFunc(app.oil_review_handler.GetInvestPotentialMainHandler))
-	mux.Get("/api/oil/review/forecast/investment-review-steps", http.HandlerFunc(app.oil_review_handler.GetInvestmentReviewForecastStepsSummary))
-	mux.Get("/api/oil/review/forecast/investment-review-steps-companies", http.HandlerFunc(app.oil_review_handler.GetCompaniesForecastSteps))
+	mux.Get("/api/oil/review/forecast/taxes", http.HandlerFunc(app.oil_review_handler.GetInvestmentReviewForecastStepsSummary))
+	mux.Get("/api/oil/review/forecast/production_forecast", http.HandlerFunc(app.oil_review_handler.GetCompaniesForecastSteps))
 	mux.Get("/api/oil/review/forecast/ebitda", http.HandlerFunc(app.oil_review_handler.GetEbitdaToGrossRevenueRatio))
-	mux.Get("/api/oil/review/forecast/taxes", http.HandlerFunc(app.oil_review_handler.GetInvestmentReviewForecastTotal))
+	mux.Get("/api/oil/review/forecast/npv", http.HandlerFunc(app.oil_review_handler.GetInvestmentReviewForecastTotal))
 	mux.Get("/api/oil/review/forecast/specopex", http.HandlerFunc(app.oil_review_handler.GetSpecOpEx))
 
 	mux.Get("/api/oil/performance/reserves", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDash))

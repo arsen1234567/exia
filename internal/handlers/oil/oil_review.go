@@ -36,7 +36,7 @@ func (h *OilReviewHandler) GetInvestmentOilProductionSummary(w http.ResponseWrit
 	}
 
 	// Optionally: Validate unit value (e.g., ensure it's either 'barrels' or 'tons')
-	if unit != "barrels" && unit != "tons" {
+	if unit != "barrels" && unit != "tons" && unit != "bpd" {
 		http.Error(w, "Invalid unit parameter", http.StatusBadRequest)
 		return
 	}
@@ -150,7 +150,14 @@ func (h *OilReviewHandler) GetInvestPotentialMainHandler(w http.ResponseWriter, 
 func (h *OilReviewHandler) GetInvestmentReviewForecastStepsSummary(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	totalReserveMultiple, err := h.InvestmentReviewForecastStepsService.GetInvestmentReviewForecastSteps(ctx)
+	currency := r.URL.Query().Get("currency")
+
+	if currency != "USD" && currency != "KZT" {
+		http.Error(w, "Invalid currency, must be USD or KZT", http.StatusBadRequest)
+		return
+	}
+
+	totalReserveMultiple, err := h.InvestmentReviewForecastStepsService.GetInvestmentReviewForecastSteps(ctx, currency)
 	if err != nil {
 		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
 		log.Println("Error retrieving data:", err)
@@ -182,7 +189,14 @@ func (h *OilReviewHandler) GetEbitdaToGrossRevenueRatio(w http.ResponseWriter, r
 func (h *OilReviewHandler) GetInvestmentReviewForecastTotal(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	totalReserveMultiple, err := h.InvestmentReviewForecastTotalService.GetInvestmentReviewForecastTotal(ctx)
+	currency := r.URL.Query().Get("currency")
+
+	if currency != "USD" && currency != "KZT" {
+		http.Error(w, "Invalud currency, must be USD or KZT", http.StatusBadRequest)
+		return
+	}
+
+	totalReserveMultiple, err := h.InvestmentReviewForecastTotalService.GetInvestmentReviewForecastTotal(ctx, currency)
 	if err != nil {
 		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
 		log.Println("Error retrieving data:", err)
@@ -196,20 +210,23 @@ func (h *OilReviewHandler) GetInvestmentReviewForecastTotal(w http.ResponseWrite
 }
 
 func (h *OilReviewHandler) GetSpecOpEx(w http.ResponseWriter, r *http.Request) {
-	currency := r.URL.Query().Get("currency")
-
-	unit := r.URL.Query().Get("unit")
 	ctx := r.Context()
 
-	totalReserveMultiple, err := h.InvestPotentialMainService.GetSpecOpEx(ctx, currency, unit)
+	currency := r.URL.Query().Get("currency")
+
+	if currency != "USD" && currency != "KZT" {
+		http.Error(w, "Invalid currency, must be USD or KZT", http.StatusBadRequest)
+		return
+	}
+
+	totalReserveMultiple, err := h.InvestPotentialMainService.GetSpecOpEx(ctx, currency)
 	if err != nil {
 		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
 		log.Println("Error retrieving data:", err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-
+	w.Header().Set("Content-Type", "application/json")
 	output := fmt.Sprintf("%f", totalReserveMultiple)
 	if _, err := w.Write([]byte(output)); err != nil {
 		http.Error(w, "Failed to write response", http.StatusInternalServerError)
@@ -219,13 +236,16 @@ func (h *OilReviewHandler) GetSpecOpEx(w http.ResponseWriter, r *http.Request) {
 
 func (h *OilReviewHandler) GetCompaniesForecastSteps(w http.ResponseWriter, r *http.Request) {
 
-	currency := r.URL.Query().Get("currency")
-
 	unit := r.URL.Query().Get("unit")
+
+	if unit != "barrels" && unit != "tons" {
+		http.Error(w, "Invalid unit, must be barrels or tons", http.StatusBadRequest)
+		return
+	}
 
 	ctx := r.Context()
 
-	oilProductions, err := h.InvestmentReviewForecastStepsService.GetCompaniesForecastStepsSummary(ctx, currency, unit)
+	oilProductions, err := h.InvestmentReviewForecastStepsService.GetCompaniesForecastStepsSummary(ctx, unit)
 	if err != nil {
 		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
 		log.Println("Error retrieving data:", err)

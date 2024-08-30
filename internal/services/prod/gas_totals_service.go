@@ -10,8 +10,8 @@ type GasTotalsService struct {
 }
 
 // GetNPVplusTV retrieves the sum of NPV plus Terminal Value for a specific user
-func (s *GasTotalsService) GetNPVplusTV(ctx context.Context) (float64, error) {
-	totalNPVplusTV, err := s.Repo.GetNPVplusTV(ctx)
+func (s *GasTotalsService) GetNPVplusTV(ctx context.Context, currency string) (float64, error) {
+	totalNPVplusTV, err := s.Repo.GetNPVplusTV(ctx, currency)
 	if err != nil {
 		return 0, err
 	}

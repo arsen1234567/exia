@@ -25,7 +25,7 @@ func (r *InvestPotentialMainRepository) GetInvestPotentialMain(ctx context.Conte
 	return totalReserveMultiple, nil
 }
 
-func (r *InvestPotentialMainRepository) GetSpecOpEx(ctx context.Context, currency, unit string) (float64, error) {
+func (r *InvestPotentialMainRepository) GetSpecOpEx(ctx context.Context, currency string) (float64, error) {
 	query := `
 	SELECT 
 		CASE 
@@ -37,11 +37,10 @@ func (r *InvestPotentialMainRepository) GetSpecOpEx(ctx context.Context, currenc
 	WHERE 
 		"Year" IN (2023, 2024, 2025, 2026, 2027, 2028)
 		AND "scenario" = 'Forecast BBrent BCPI' AND
-		"currency" = $1 AND
-		"unit" = $2;
+		"currency" = $1
 	`
 
-	row := r.Db.QueryRowContext(ctx, query, currency, unit)
+	row := r.Db.QueryRowContext(ctx, query, currency)
 
 	var totalOperationalExpenses float64
 	if err := row.Scan(&totalOperationalExpenses); err != nil {
