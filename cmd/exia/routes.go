@@ -46,8 +46,6 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/api/oil/reserves/subsoil_geojson", http.HandlerFunc(app.oil_reserves_handler.GetSubsoilGeojson))
 
-	mux.Get("/api/gas/review/aggregated_summary", http.HandlerFunc(app.gas_review_handler.GetAggregatedGasReviewSummary))
-
 	mux.Get("/api/gas/review/financial_indicators/production", http.HandlerFunc(app.gas_review_handler.GetGasProductionSummary))
 	mux.Get("/api/gas/review/financial_indicators/taxes", http.HandlerFunc(app.gas_review_handler.GetKgdTaxesSummary))
 	mux.Get("/api/gas/review/financial_indicators/recoverable_gas_reserves", http.HandlerFunc(app.gas_review_handler.GetRecoverableGasReservesSummary))

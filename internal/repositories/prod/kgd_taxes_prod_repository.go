@@ -10,7 +10,7 @@ type KgdTaxesProdRepository struct {
 	Db *sql.DB
 }
 
-func (r *KgdTaxesProdRepository) GetKgdTaxesProdSummary(ctx context.Context, year int, currency string) ([]models.KgdTaxesProdSummary, error) {
+func (r *KgdTaxesProdRepository) GetKgdTaxesProdSummaryForYearRange(ctx context.Context, startYear, endYear int, currency string) ([]models.KgdTaxesProdSummary, error) {
 	query := `
 	SELECT 
 		SUM(summa) AS total_value, 
@@ -18,15 +18,15 @@ func (r *KgdTaxesProdRepository) GetKgdTaxesProdSummary(ctx context.Context, yea
 	FROM 
 		prod.kgd_taxes_prod 
 	WHERE 
-		EXTRACT(YEAR FROM receipt_date) BETWEEN 2015 AND LEAST($1, 2023) AND
-		currency = $2
+		EXTRACT(YEAR FROM receipt_date) BETWEEN $1 AND $2 AND
+		currency = $3
 	GROUP BY 
 		receipt_year
 	ORDER BY 
 		receipt_year;
-`
+	`
 
-	rows, err := r.Db.QueryContext(ctx, query, year, currency)
+	rows, err := r.Db.QueryContext(ctx, query, startYear, endYear, currency)
 	if err != nil {
 		return nil, err
 	}
