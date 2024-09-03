@@ -3,16 +3,16 @@ package repositories
 import (
 	"context"
 	"database/sql"
-	"log"
 	models "tender/internal/models/rawData"
+
+	"github.com/lib/pq"
 )
 
 type KgdTaxesRepository struct {
 	Db *sql.DB
 }
 
-func (r *KgdTaxesRepository) GetKgdTaxesSummary(ctx context.Context, year int) ([]models.KgdTaxesSummary, error) {
-	log.Println("year", year)
+func (r *KgdTaxesRepository) GetKgdTaxesSummaryByBin(ctx context.Context, year int, bins ...string) ([]models.KgdTaxesSummary, error) {
 	query := `
 	SELECT 
 		EXTRACT(YEAR FROM receipt_date) AS year,
@@ -21,14 +21,7 @@ func (r *KgdTaxesRepository) GetKgdTaxesSummary(ctx context.Context, year int) (
 		raw_data.kgd_taxes
 	WHERE 
 		receipt_date < '2024-01-01'
-		AND bin IN ('000340002165','050840002757', 
-		            '970740000392','020440001144',
-		            '060640006784','101140017122',
-		            '110140008803','150441026419',
-		            '050140002494','190240017187',
-		            '030940002310','060140015913',
-		            '201240027449','031040006125',
-		            '080240013062')
+		AND bin = ANY($2)
 		AND pay_status = '2 - Разнесен'
 		AND pay_type = 'Налог'
 		AND EXTRACT(YEAR FROM receipt_date) <= CAST($1 AS INTEGER)
@@ -38,7 +31,7 @@ func (r *KgdTaxesRepository) GetKgdTaxesSummary(ctx context.Context, year int) (
 		year;
 	`
 
-	rows, err := r.Db.QueryContext(ctx, query, year)
+	rows, err := r.Db.QueryContext(ctx, query, year, pq.Array(bins))
 	if err != nil {
 		return nil, err
 	}

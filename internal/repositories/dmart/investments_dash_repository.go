@@ -274,7 +274,8 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashRevenue(ctx context.Contex
 		"currencyunit" = $1 AND
 		"name_short_en" = $2 AND
 		"report_type" = $3 AND
-		"report_year" <= $4
+		"report_year" <= $4 AND
+		"ProductionUnit" = 'tons'
 	GROUP BY 
 		"report_year"
 	ORDER BY 
