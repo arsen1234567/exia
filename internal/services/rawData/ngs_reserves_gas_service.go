@@ -2,21 +2,32 @@ package services
 
 import (
 	"context"
+	"fmt"
+	"time"
+
+	"tender/internal/caching"
 	models "tender/internal/models/rawData" // Ensure this is correct
 	repositories "tender/internal/repositories/rawData"
 )
 
 type NgsReservesGasService struct {
-	Repo *repositories.NgsReservesGasRepository
+	Repo  *repositories.NgsReservesGasRepository
+	Cache caching.Cache
 }
 
 func (s *NgsReservesGasService) GetRecoverableGasReservesSummary(ctx context.Context, year int) ([]models.RecoverableGasReservesSummary, error) {
-	// Define channels for results and errors
+	// Generate cache key based on the year
+	cacheKey := fmt.Sprintf("recoverable_gas_reserves_%d", year)
+
+	// Check if the result is in the cache
+	if cachedData, found := s.Cache.Get(ctx, cacheKey); found {
+		return cachedData.([]models.RecoverableGasReservesSummary), nil
+	}
+
+	// Fetch data if not in cache
 	resultChan := make(chan []models.RecoverableGasReservesSummary)
 	errorChan := make(chan error)
 
-	// Define time ranges or other partitions (e.g., split the years)
-	// For simplicity, here we just use two partitions: before and after 2000
 	partitions := []struct {
 		startYear int
 		endYear   int
@@ -25,7 +36,6 @@ func (s *NgsReservesGasService) GetRecoverableGasReservesSummary(ctx context.Con
 		{2001, year},
 	}
 
-	// Launch Goroutines to fetch data in parallel
 	for _, partition := range partitions {
 		go func(startYear, endYear int) {
 			summary, err := s.Repo.GetRecoverableGasReservesByYearRange(ctx, startYear, endYear)
@@ -37,7 +47,6 @@ func (s *NgsReservesGasService) GetRecoverableGasReservesSummary(ctx context.Con
 		}(partition.startYear, partition.endYear)
 	}
 
-	// Collect results
 	var finalResults []models.RecoverableGasReservesSummary
 	for i := 0; i < len(partitions); i++ {
 		select {
@@ -47,6 +56,9 @@ func (s *NgsReservesGasService) GetRecoverableGasReservesSummary(ctx context.Con
 			return nil, err
 		}
 	}
+
+	// Store the result in the cache
+	s.Cache.Set(ctx, cacheKey, finalResults, 10*time.Minute)
 
 	return finalResults, nil
 }

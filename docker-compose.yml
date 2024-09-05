@@ -4,8 +4,10 @@ services:
   app:
     build: .
     container_name: exia_app
-    env_file:
-      - .env
+    environment:
+      SERVER_ADDRESS: ":4000"
+      DB_DRIVER: "postgres"
+      DB_URL: "postgres://postgres:admin@109.248.213.105:5432/kazenergy?sslmode=disable"
     ports:
       - "4000:4000"
     networks:

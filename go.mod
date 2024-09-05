@@ -10,6 +10,8 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
+require github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
+
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/joho/godotenv v1.5.1

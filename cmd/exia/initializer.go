@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
+
+	"tender/internal/caching"
+
 	gasHandlers "tender/internal/handlers/gas"
 	oilHandlers "tender/internal/handlers/oil"
 	dmartRepositories "tender/internal/repositories/dmart"
@@ -33,6 +37,8 @@ type application struct {
 }
 
 func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
+
+	cache := caching.NewInMemoryCache(10*time.Minute, 30*time.Minute)
 
 	subsoil_geojson_repository := &publicRepositories.SubsoilGeojsonRepository{Db: db}
 	subsoil_geojson_service := &publicServices.SubsoilGeojsonService{Repo: subsoil_geojson_repository}
@@ -71,7 +77,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	invest_potential_main_service := &dmartServices.InvestPotentialMainService{Repo: invest_potential_main_repository}
 
 	ngs_reserves_gas_repository := &rawDataRepositories.NgsReservesGasRepository{Db: db}
-	ngs_reserves_gas_service := &rawDataServices.NgsReservesGasService{Repo: ngs_reserves_gas_repository}
+	ngs_reserves_gas_service := &rawDataServices.NgsReservesGasService{Repo: ngs_reserves_gas_repository, Cache: cache}
 
 	st_gas_balance_repository := &rawDataRepositories.StGasBalanceRepository{Db: db}
 	st_gas_balance_service := &rawDataServices.StGasBalanceService{Repo: st_gas_balance_repository}
