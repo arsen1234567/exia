@@ -45,6 +45,7 @@ func (s *NgsReservesGasService) GetRecoverableGasReservesSummary(ctx context.Con
 			}
 			resultChan <- summary
 		}(partition.startYear, partition.endYear)
+
 	}
 
 	var finalResults []models.RecoverableGasReservesSummary

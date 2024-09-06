@@ -2,57 +2,62 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"sync"
+	"tender/internal/caching"
 	models "tender/internal/models/prod" // Ensure this is correct
 	repositories "tender/internal/repositories/prod"
+	"time"
 )
 
 type KgdTaxesProdService struct {
-	Repo *repositories.KgdTaxesProdRepository
+	Repo  *repositories.KgdTaxesProdRepository
+	Cache caching.Cache
 }
 
 func (s *KgdTaxesProdService) GetKgdTaxesProdSummary(ctx context.Context, year int, currency string) ([]models.KgdTaxesProdSummary, error) {
-	// Define the year ranges for parallel processing
-	yearRanges := generateYearRanges(2015, year, 2) // Split into 2-year ranges for example
+	cacheKey := fmt.Sprintf("kgd_taxes_prod_%d_%s", year, currency)
 
-	resultChan := make(chan []models.KgdTaxesProdSummary, len(yearRanges))
-	errorChan := make(chan error, len(yearRanges))
+	// Проверка кэша
+	if cachedData, found := s.Cache.Get(ctx, cacheKey); found {
+		return cachedData.([]models.KgdTaxesProdSummary), nil
+	}
 
+	yearRanges := generateYearRanges(2015, year, 2)
 	var wg sync.WaitGroup
+	const maxGoroutines = 20
+	sem := make(chan struct{}, maxGoroutines)
 
-	// Execute queries concurrently
+	results := make([]models.KgdTaxesProdSummary, 0)
+	errors := make([]error, 0)
+
+	// Использование горутин для параллельной обработки запросов
 	for _, yr := range yearRanges {
 		wg.Add(1)
 		go func(startYear, endYear int) {
 			defer wg.Done()
-			results, err := s.Repo.GetKgdTaxesProdSummaryForYearRange(ctx, startYear, endYear, currency)
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			res, err := s.Repo.GetKgdTaxesProdSummaryForYearRange(ctx, startYear, endYear, currency)
 			if err != nil {
-				errorChan <- err
+				errors = append(errors, err)
 				return
 			}
-			resultChan <- results
+			results = append(results, res...)
 		}(yr.startYear, yr.endYear)
 	}
 
-	// Wait for all Goroutines to finish
-	go func() {
-		wg.Wait()
-		close(resultChan)
-		close(errorChan)
-	}()
+	wg.Wait()
 
-	// Collect results
-	finalResults := make([]models.KgdTaxesProdSummary, 0)
-	for res := range resultChan {
-		finalResults = append(finalResults, res...)
+	if len(errors) > 0 {
+		return nil, errors[0]
 	}
 
-	// Handle errors
-	if len(errorChan) > 0 {
-		return nil, <-errorChan
-	}
+	// Кэширование результата на 10 минут
+	s.Cache.Set(ctx, cacheKey, results, 10*time.Minute)
 
-	return finalResults, nil
+	return results, nil
 }
 
 // generateYearRanges splits the year range into smaller chunks

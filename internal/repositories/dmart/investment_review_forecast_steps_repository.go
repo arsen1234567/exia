@@ -98,3 +98,203 @@ func (r *InvestmentReviewForecastStepsRepository) GetCompaniesForecastSteps(ctx 
 
 	return results, nil
 }
+
+func (r *InvestmentReviewForecastStepsRepository) GetRevenueInvestmentReviewForecastSteps(ctx context.Context, unit, currency string) ([]models.RevenueByYear, error) {
+	query := `
+	SELECT 
+	    "name_abbr",
+	    "Year",
+	    SUM("GrossRevenue") AS total_gross_revenue
+	FROM 
+	    dmart.investment_review_forecast_steps
+	WHERE 
+	    scenario IN ('Forecast BBrent BCPI')
+	    AND unit = $1
+	    AND currency = $2
+	GROUP BY 
+	    "name_abbr", "Year"
+	ORDER BY 
+	    "name_abbr", "Year";
+	`
+
+	rows, err := r.Db.QueryContext(ctx, query, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.RevenueByYear
+	for rows.Next() {
+		var rByCompanyAndYear models.RevenueByYear
+		if err := rows.Scan(&rByCompanyAndYear.CompanyName, &rByCompanyAndYear.Year, &rByCompanyAndYear.TotalGrossRevenue); err != nil {
+			return nil, err
+		}
+		results = append(results, rByCompanyAndYear)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (r *InvestmentReviewForecastStepsRepository) GetCapExInvestmentReviewForecastSteps(ctx context.Context, unit, currency string) ([]models.InvestmentReviewForecastData, error) {
+	query := `
+	SELECT 
+	    "name_abbr",
+	    "Year",
+	    SUM("CapEx") AS cap_ex
+	FROM 
+	    dmart.investment_review_forecast_steps
+	WHERE 
+	    scenario IN ('Forecast BBrent BCPI')
+	    AND unit = $1
+	    AND currency = $2
+	GROUP BY 
+	    "name_abbr", "Year"
+	ORDER BY 
+	    "name_abbr", "Year";
+	`
+
+	rows, err := r.Db.QueryContext(ctx, query, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.InvestmentReviewForecastData
+	for rows.Next() {
+		var rByCompanyAndYear models.InvestmentReviewForecastData
+		if err := rows.Scan(&rByCompanyAndYear.CompanyName, &rByCompanyAndYear.Year, &rByCompanyAndYear.Data); err != nil {
+			return nil, err
+		}
+		results = append(results, rByCompanyAndYear)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (r *InvestmentReviewForecastStepsRepository) GetATFCFInvestmentReviewForecastSteps(ctx context.Context, unit, currency string) ([]models.InvestmentReviewForecastData, error) {
+	query := `
+	SELECT 
+	    "name_abbr",
+	    "Year",
+	    SUM("ATFCF") AS cap_ex
+	FROM 
+	    dmart.investment_review_forecast_steps
+	WHERE 
+	    scenario IN ('Forecast BBrent BCPI')
+	    AND unit = $1
+	    AND currency = $2
+	GROUP BY 
+	    "name_abbr", "Year"
+	ORDER BY 
+	    "name_abbr", "Year";
+	`
+
+	rows, err := r.Db.QueryContext(ctx, query, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.InvestmentReviewForecastData
+	for rows.Next() {
+		var rByCompanyAndYear models.InvestmentReviewForecastData
+		if err := rows.Scan(&rByCompanyAndYear.CompanyName, &rByCompanyAndYear.Year, &rByCompanyAndYear.Data); err != nil {
+			return nil, err
+		}
+		results = append(results, rByCompanyAndYear)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (r *InvestmentReviewForecastStepsRepository) GetOpExInvestmentReviewForecastSteps(ctx context.Context, unit, currency string) ([]models.InvestmentReviewForecastData, error) {
+	query := `
+	SELECT 
+	    "name_abbr",
+	    "Year",
+	    SUM("OperatingCosts") AS op_ex
+	FROM 
+	    dmart.investment_review_forecast_steps
+	WHERE 
+	    scenario IN ('Forecast BBrent BCPI')
+	    AND unit = $1
+	    AND currency = $2
+	GROUP BY 
+	    "name_abbr", "Year"
+	ORDER BY 
+	    "name_abbr", "Year";
+	`
+
+	rows, err := r.Db.QueryContext(ctx, query, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.InvestmentReviewForecastData
+	for rows.Next() {
+		var rByCompanyAndYear models.InvestmentReviewForecastData
+		if err := rows.Scan(&rByCompanyAndYear.CompanyName, &rByCompanyAndYear.Year, &rByCompanyAndYear.Data); err != nil {
+			return nil, err
+		}
+		results = append(results, rByCompanyAndYear)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (r *InvestmentReviewForecastStepsRepository) GetGovShareInvestmentReviewForecastSteps(ctx context.Context, unit, currency string) ([]models.InvestmentReviewForecastData, error) {
+	query := `
+	SELECT 
+	    "name_abbr",
+	    "Year",
+	    SUM("GovShare") AS gov_share
+	FROM 
+	    dmart.investment_review_forecast_steps
+	WHERE 
+	    scenario IN ('Forecast BBrent BCPI')
+	    AND unit = $1
+	    AND currency = $2
+	GROUP BY 
+	    "name_abbr", "Year"
+	ORDER BY 
+	    "name_abbr", "Year";
+	`
+
+	rows, err := r.Db.QueryContext(ctx, query, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.InvestmentReviewForecastData
+	for rows.Next() {
+		var rByCompanyAndYear models.InvestmentReviewForecastData
+		if err := rows.Scan(&rByCompanyAndYear.CompanyName, &rByCompanyAndYear.Year, &rByCompanyAndYear.Data); err != nil {
+			return nil, err
+		}
+		results = append(results, rByCompanyAndYear)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}

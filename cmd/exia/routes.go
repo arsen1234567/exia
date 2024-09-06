@@ -9,9 +9,9 @@ import (
 func (app *application) routes() http.Handler {
 	mux := pat.New()
 
-	mux.Get("/api/oil/review/financial_indicators/production", http.HandlerFunc(app.oil_review_handler.GetInvestmentOilProductionSummary))
+	mux.Get("/api/oil/review/financial_indicators/production", http.HandlerFunc(app.oil_review_handler.GetInvestmentOilProductionSummary)) // UPDATED
 	mux.Get("/api/oil/review/financial_indicators/reserves", http.HandlerFunc(app.oil_review_handler.GetInvestmentReservesSummary))
-	mux.Get("/api/oil/review/financial_indicators/taxes", http.HandlerFunc(app.oil_review_handler.GetKgdTaxesProd))
+	mux.Get("/api/oil/review/financial_indicators/taxes", http.HandlerFunc(app.oil_review_handler.GetKgdTaxesProd)) // NEED TO UPD
 	mux.Get("/api/oil/review/financial_indicators/investment_profit", http.HandlerFunc(app.oil_review_handler.GetInvestmentNetProfitSummary))
 
 	mux.Get("/api/oil/review/forecast/reserves", http.HandlerFunc(app.oil_review_handler.GetInvestPotentialMainHandler))
@@ -20,6 +20,11 @@ func (app *application) routes() http.Handler {
 	mux.Get("/api/oil/review/forecast/ebitda", http.HandlerFunc(app.oil_review_handler.GetEbitdaToGrossRevenueRatio))
 	mux.Get("/api/oil/review/forecast/npv", http.HandlerFunc(app.oil_review_handler.GetInvestmentReviewForecastTotal))
 	mux.Get("/api/oil/review/forecast/specopex", http.HandlerFunc(app.oil_review_handler.GetSpecOpEx))
+	mux.Get("/api/oil/review/forecast/revenue", http.HandlerFunc(app.oil_review_handler.GetRevenueForecastSteps))
+	mux.Get("/api/oil/review/forecast/capex", http.HandlerFunc(app.oil_review_handler.GetCapExForecastSteps))
+	mux.Get("/api/oil/review/forecast/atfcf", http.HandlerFunc(app.oil_review_handler.GetATFCFForecastSteps))
+	mux.Get("/api/oil/review/forecast/opex", http.HandlerFunc(app.oil_review_handler.GetOpExForecastSteps))
+	mux.Get("/api/oil/review/forecast/gov_share", http.HandlerFunc(app.oil_review_handler.GetGovShareForecastSteps))
 
 	mux.Get("/api/oil/performance/reserves", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDash))
 	mux.Get("/api/oil/performance/production", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashOilProduction))
@@ -37,18 +42,23 @@ func (app *application) routes() http.Handler {
 	mux.Get("/api/oil/performance/assets", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashAssets))
 	mux.Get("/api/oil/performance/equity", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashCapital))
 	mux.Get("/api/oil/performance/liabilities", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashLiabilities))
+	//
+	mux.Get("/api/oil/performance/current_ratio", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashCurrentRatio))
+	mux.Get("/api/oil/performance/cf", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashCF))
+	mux.Get("/api/oil/performance/capex", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashCapEx))
+	mux.Get("/api/oil/performance/cash", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashCashEndPeriod))
 
 	mux.Get("/api/oil/benchmarking/specific_net_profit", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashSpecificNetProfitGraph)) // WORK
 	mux.Get("/api/oil/benchmarking/roa", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashROAGraph))                               // WORK
 	mux.Get("/api/oil/benchmarking/specific_taxes", http.HandlerFunc(app.oil_benchmarking_handler.GetSpecificTaxesGraph))                         // WORK
-	mux.Get("/api/oil/benchmarking/tax_burden_graph", http.HandlerFunc(app.oil_benchmarking_handler.GetTaxBurdenGraph))                           // WORK
+	mux.Get("/api/oil/benchmarking/tax_burden_graph", http.HandlerFunc(app.oil_benchmarking_handler.GetTaxBurdenGraph))                           // UPDATING
 	mux.Get("/api/oil/benchmarking/sum_taxes", http.HandlerFunc(app.oil_benchmarking_handler.GetSummaAllTaxes))                                   // WORK
 
 	mux.Get("/api/oil/reserves/subsoil_geojson", http.HandlerFunc(app.oil_reserves_handler.GetSubsoilGeojson))
 
 	mux.Get("/api/gas/review/financial_indicators/production", http.HandlerFunc(app.gas_review_handler.GetGasProductionSummary))
-	mux.Get("/api/gas/review/financial_indicators/taxes", http.HandlerFunc(app.gas_review_handler.GetKgdTaxesSummary))
-	mux.Get("/api/gas/review/financial_indicators/recoverable_gas_reserves", http.HandlerFunc(app.gas_review_handler.GetRecoverableGasReservesSummary))
+	mux.Get("/api/gas/review/financial_indicators/taxes", http.HandlerFunc(app.gas_review_handler.GetKgdTaxesSummary))                                  // UPDATED
+	mux.Get("/api/gas/review/financial_indicators/recoverable_gas_reserves", http.HandlerFunc(app.gas_review_handler.GetRecoverableGasReservesSummary)) // NEED TO UPD
 	mux.Get("/api/gas/review/financial_indicators/net_profit", http.HandlerFunc(app.gas_review_handler.GetNetProfitSummary))
 
 	mux.Get("/api/gas/review/perspective/reserve_ratio", http.HandlerFunc(app.gas_review_handler.GetReserveRatio))

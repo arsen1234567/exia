@@ -263,3 +263,133 @@ func (h *OilReviewHandler) GetCompaniesForecastSteps(w http.ResponseWriter, r *h
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
+
+func (h *OilReviewHandler) GetRevenueForecastSteps(w http.ResponseWriter, r *http.Request) {
+
+	unit := r.URL.Query().Get("unit")
+
+	currency := r.URL.Query().Get("currency")
+
+	if unit != "barrels" && unit != "tons" {
+		http.Error(w, "Invalid unit, must be barrels or tons", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+
+	oilProductions, err := h.InvestmentReviewForecastStepsService.GetRevenueForecastStepsSummary(ctx, unit, currency)
+	if err != nil {
+		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
+		log.Println("Error retrieving data:", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(oilProductions); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *OilReviewHandler) GetCapExForecastSteps(w http.ResponseWriter, r *http.Request) {
+
+	unit := r.URL.Query().Get("unit")
+
+	currency := r.URL.Query().Get("currency")
+
+	if unit != "barrels" && unit != "tons" {
+		http.Error(w, "Invalid unit, must be barrels or tons", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+
+	oilProductions, err := h.InvestmentReviewForecastStepsService.GetCapExForecastStepsSummary(ctx, unit, currency)
+	if err != nil {
+		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
+		log.Println("Error retrieving data:", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(oilProductions); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *OilReviewHandler) GetATFCFForecastSteps(w http.ResponseWriter, r *http.Request) {
+
+	unit := r.URL.Query().Get("unit")
+
+	currency := r.URL.Query().Get("currency")
+
+	if unit != "barrels" && unit != "tons" {
+		http.Error(w, "Invalid unit, must be barrels or tons", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+
+	oilProductions, err := h.InvestmentReviewForecastStepsService.GetATFCFForecastStepsSummary(ctx, unit, currency)
+	if err != nil {
+		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
+		log.Println("Error retrieving data:", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(oilProductions); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *OilReviewHandler) GetOpExForecastSteps(w http.ResponseWriter, r *http.Request) {
+
+	unit := r.URL.Query().Get("unit")
+
+	currency := r.URL.Query().Get("currency")
+
+	if unit != "barrels" && unit != "tons" {
+		http.Error(w, "Invalid unit, must be barrels or tons", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+
+	oilProductions, err := h.InvestmentReviewForecastStepsService.GetOpExForecastStepsSummary(ctx, unit, currency)
+	if err != nil {
+		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
+		log.Println("Error retrieving data:", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(oilProductions); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *OilReviewHandler) GetGovShareForecastSteps(w http.ResponseWriter, r *http.Request) {
+
+	unit := r.URL.Query().Get("unit")
+
+	currency := r.URL.Query().Get("currency")
+
+	if unit != "barrels" && unit != "tons" {
+		http.Error(w, "Invalid unit, must be barrels or tons", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+
+	oilProductions, err := h.InvestmentReviewForecastStepsService.GetGovShareForecastStepsSummary(ctx, unit, currency)
+	if err != nil {
+		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
+		log.Println("Error retrieving data:", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(oilProductions); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}

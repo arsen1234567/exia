@@ -26,3 +26,15 @@ type InvestmentReviewForecastStepsSummary struct {
 	Year          int     `json:"Year"`
 	OilProduction float64 `json:"OilProduction"`
 }
+
+type RevenueByYear struct {
+	CompanyName       string  `json:"name_abbr"`
+	Year              int     `json:Year"`
+	TotalGrossRevenue float64 `json:"GrossRevenue"`
+}
+
+type InvestmentReviewForecastData struct {
+	CompanyName string  `json:"name_abbr"`
+	Year        int     `json:"year"`
+	Data        float64 `json:"data"`
+}

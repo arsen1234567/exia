@@ -720,3 +720,191 @@ func (h *OilperformanceResultsHandler) GetInvestmentsDashLiabilities(w http.Resp
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
+
+func (h *OilperformanceResultsHandler) GetInvestmentsDashCurrentRatio(w http.ResponseWriter, r *http.Request) {
+	company := r.URL.Query().Get("company")
+	currencyunit := r.URL.Query().Get("currency")
+	reportType := r.URL.Query().Get("reportType")
+	reportyear_str := r.URL.Query().Get("year")
+	unit := r.URL.Query().Get("unit")
+
+	if reportyear_str == "" {
+		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
+		return
+	}
+
+	reportyear, err := strconv.Atoi(reportyear_str)
+	if err != nil {
+		http.Error(w, "Invalid year parameter. Must be an integer.", http.StatusBadRequest)
+		return
+	}
+
+	if currencyunit != "KZT" && currencyunit != "USD" {
+		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	var reportTypeString string
+	switch reportType {
+	case "1":
+		reportTypeString = "Консолидированный"
+	case "0":
+		reportTypeString = "Не консолидированный"
+	default:
+		http.Error(w, "Invalid report type. Only '1' (Консолидированный) and '0' (Не консолидированный) are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashCurrentRatio(ctx, reportTypeString, company, currencyunit, unit, reportyear)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(totalSumSummary); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *OilperformanceResultsHandler) GetInvestmentsDashCF(w http.ResponseWriter, r *http.Request) {
+	company := r.URL.Query().Get("company")
+	currencyunit := r.URL.Query().Get("currency")
+	reportType := r.URL.Query().Get("reportType")
+	reportyear_str := r.URL.Query().Get("year")
+	unit := r.URL.Query().Get("unit")
+
+	if reportyear_str == "" {
+		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
+		return
+	}
+
+	reportyear, err := strconv.Atoi(reportyear_str)
+	if err != nil {
+		http.Error(w, "Invalid year parameter. Must be an integer.", http.StatusBadRequest)
+		return
+	}
+
+	if currencyunit != "KZT" && currencyunit != "USD" {
+		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	var reportTypeString string
+	switch reportType {
+	case "1":
+		reportTypeString = "Консолидированный"
+	case "0":
+		reportTypeString = "Не консолидированный"
+	default:
+		http.Error(w, "Invalid report type. Only '1' (Консолидированный) and '0' (Не консолидированный) are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashCF(ctx, reportTypeString, company, currencyunit, unit, reportyear)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(totalSumSummary); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *OilperformanceResultsHandler) GetInvestmentsDashCapEx(w http.ResponseWriter, r *http.Request) {
+	company := r.URL.Query().Get("company")
+	currencyunit := r.URL.Query().Get("currency")
+	reportType := r.URL.Query().Get("reportType")
+	reportyear_str := r.URL.Query().Get("year")
+	unit := r.URL.Query().Get("unit")
+
+	if reportyear_str == "" {
+		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
+		return
+	}
+
+	reportyear, err := strconv.Atoi(reportyear_str)
+	if err != nil {
+		http.Error(w, "Invalid year parameter. Must be an integer.", http.StatusBadRequest)
+		return
+	}
+
+	if currencyunit != "KZT" && currencyunit != "USD" {
+		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	var reportTypeString string
+	switch reportType {
+	case "1":
+		reportTypeString = "Консолидированный"
+	case "0":
+		reportTypeString = "Не консолидированный"
+	default:
+		http.Error(w, "Invalid report type. Only '1' (Консолидированный) and '0' (Не консолидированный) are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashCapEx(ctx, reportTypeString, company, currencyunit, unit, reportyear)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(totalSumSummary); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func (h *OilperformanceResultsHandler) GetInvestmentsDashCashEndPeriod(w http.ResponseWriter, r *http.Request) {
+	company := r.URL.Query().Get("company")
+	currencyunit := r.URL.Query().Get("currency")
+	reportType := r.URL.Query().Get("reportType")
+	reportyear_str := r.URL.Query().Get("year")
+	unit := r.URL.Query().Get("unit")
+
+	if reportyear_str == "" {
+		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
+		return
+	}
+
+	reportyear, err := strconv.Atoi(reportyear_str)
+	if err != nil {
+		http.Error(w, "Invalid year parameter. Must be an integer.", http.StatusBadRequest)
+		return
+	}
+
+	if currencyunit != "KZT" && currencyunit != "USD" {
+		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	var reportTypeString string
+	switch reportType {
+	case "1":
+		reportTypeString = "Консолидированный"
+	case "0":
+		reportTypeString = "Не консолидированный"
+	default:
+		http.Error(w, "Invalid report type. Only '1' (Консолидированный) and '0' (Не консолидированный) are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashCashEndPeriod(ctx, reportTypeString, company, currencyunit, unit, reportyear)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(totalSumSummary); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}

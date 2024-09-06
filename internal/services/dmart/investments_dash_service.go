@@ -188,3 +188,35 @@ func (s *InvestmentsDashService) GetInvestmentsDashROAGraph(ctx context.Context,
 	}
 	return totalSumSummary, nil
 }
+
+func (s *InvestmentsDashService) GetInvestmentsDashCurrentRatio(ctx context.Context, reporttype, company, currency, unit string, reportyear int) (map[string]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashCurrentRatio(ctx, reporttype, company, currency, unit, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashCF(ctx context.Context, reporttype, company, currency, unit string, reportyear int) (map[string]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashCF(ctx, reporttype, company, currency, unit, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashCapEx(ctx context.Context, reporttype, company, currency, unit string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashCapExSummary(ctx, reporttype, company, currency, unit, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}
+
+func (s *InvestmentsDashService) GetInvestmentsDashCashEndPeriod(ctx context.Context, reporttype, company, currency, unit string, reportyear int) (map[int]float64, error) {
+	totalSumSummary, err := s.Repo.GetInvestmentsDashCashEndPeriod(ctx, reporttype, company, currency, unit, reportyear)
+	if err != nil {
+		return nil, err
+	}
+	return totalSumSummary, nil
+}

@@ -33,3 +33,43 @@ func (s *InvestmentReviewForecastStepsService) GetCompaniesForecastStepsSummary(
 	}
 	return summary, nil
 }
+
+func (s *InvestmentReviewForecastStepsService) GetRevenueForecastStepsSummary(ctx context.Context, unit, currency string) ([]models.RevenueByYear, error) {
+	summary, err := s.Repo.GetRevenueInvestmentReviewForecastSteps(ctx, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	return summary, nil
+}
+
+func (s *InvestmentReviewForecastStepsService) GetCapExForecastStepsSummary(ctx context.Context, unit, currency string) ([]models.InvestmentReviewForecastData, error) {
+	summary, err := s.Repo.GetCapExInvestmentReviewForecastSteps(ctx, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	return summary, nil
+}
+
+func (s *InvestmentReviewForecastStepsService) GetATFCFForecastStepsSummary(ctx context.Context, unit, currency string) ([]models.InvestmentReviewForecastData, error) {
+	summary, err := s.Repo.GetATFCFInvestmentReviewForecastSteps(ctx, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	return summary, nil
+}
+
+func (s *InvestmentReviewForecastStepsService) GetOpExForecastStepsSummary(ctx context.Context, unit, currency string) ([]models.InvestmentReviewForecastData, error) {
+	summary, err := s.Repo.GetOpExInvestmentReviewForecastSteps(ctx, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	return summary, nil
+}
+
+func (s *InvestmentReviewForecastStepsService) GetGovShareForecastStepsSummary(ctx context.Context, unit, currency string) ([]models.InvestmentReviewForecastData, error) {
+	summary, err := s.Repo.GetGovShareInvestmentReviewForecastSteps(ctx, unit, currency)
+	if err != nil {
+		return nil, err
+	}
+	return summary, nil
+}

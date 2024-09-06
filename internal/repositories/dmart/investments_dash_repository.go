@@ -768,3 +768,181 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashROAGraph(ctx context.Conte
 
 	return result, nil
 }
+
+func (r *InvestmentsDashRepository) GetInvestmentsDashCurrentRatio(ctx context.Context, reporttype, company, currency, unit string, reportYear int) (map[string]float64, error) {
+	query := `
+    SELECT 
+        COALESCE(AVG(NULLIF("ShortAssets", 0) / NULLIF("ShortLiabilities", 0)), 0) AS current_ratio
+    FROM 
+        dmart.investments_dash
+    WHERE 
+        "report_type" = $1 AND
+		"report_year" = $2 AND
+        "name_short_en" = $3 AND
+		"currencyunit" = $4 AND
+		"ProductionUnit" = $5;
+    `
+
+	rows, err := r.Db.QueryContext(ctx, query, reporttype, reportYear, company, currency, unit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make(map[string]float64)
+	for rows.Next() {
+		var currentRatio float64
+		if err := rows.Scan(&currentRatio); err != nil {
+			return nil, err
+		}
+		result[company] = currentRatio
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (r *InvestmentsDashRepository) GetInvestmentsDashCF(ctx context.Context, reporttype, company, currency, unit string, reportYear int) (map[string]float64, error) {
+	query := `
+    SELECT 
+	SUM("OperationsCF") AS total_cf
+    FROM 
+        dmart.investments_dash
+    WHERE 
+        "report_type" = $1 AND
+		"report_year" = $2 AND
+        "name_short_en" = $3 AND
+		"currencyunit" = $4 AND
+		"ProductionUnit" = $5;
+    `
+
+	rows, err := r.Db.QueryContext(ctx, query, reporttype, reportYear, company, currency, unit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make(map[string]float64)
+	for rows.Next() {
+		var totalCF sql.NullFloat64 // Используем sql.NullFloat64 для обработки NULL
+		if err := rows.Scan(&totalCF); err != nil {
+			return nil, err
+		}
+
+		// Проверяем, было ли значение NULL, и устанавливаем результат
+		if totalCF.Valid {
+			result[company] = totalCF.Float64
+		} else {
+			result[company] = 0 // Если значение NULL, устанавливаем 0
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (r *InvestmentsDashRepository) GetInvestmentsDashCapExSummary(ctx context.Context, reporttype, company, currency, unit string, reportYear int) (map[int]float64, error) {
+	query := `
+    SELECT 
+        "report_year",
+        SUM("CapExOS" + "CapExNMA") AS total_capex
+    FROM 
+        dmart.investments_dash
+    WHERE 
+        "report_type" = $1 AND
+        "report_year" BETWEEN 2008 AND $2 AND
+        "name_short_en" = $3 AND
+        "currencyunit" = $4 AND
+        "ProductionUnit" = $5
+    GROUP BY 
+        "report_year"
+    ORDER BY 
+        "report_year";
+    `
+
+	// Выполняем запрос
+	rows, err := r.Db.QueryContext(ctx, query, reporttype, reportYear, company, currency, unit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make(map[int]float64)
+	for rows.Next() {
+		var year int
+		var totalCapEx sql.NullFloat64 // Используем sql.NullFloat64 для обработки NULL
+		if err := rows.Scan(&year, &totalCapEx); err != nil {
+			return nil, err
+		}
+
+		// Проверяем, было ли значение NULL, и устанавливаем результат
+		if totalCapEx.Valid {
+			result[year] = totalCapEx.Float64
+		} else {
+			result[year] = 0 // Если значение NULL, устанавливаем 0
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// CashEndPeriod
+
+func (r *InvestmentsDashRepository) GetInvestmentsDashCashEndPeriod(ctx context.Context, reporttype, company, currency, unit string, reportYear int) (map[int]float64, error) {
+	query := `
+    SELECT 
+        "report_year",
+        SUM("CashEndPeriod") AS total_capex
+    FROM 
+        dmart.investments_dash
+    WHERE 
+        "report_type" = $1 AND
+        "report_year" BETWEEN 2008 AND $2 AND
+        "name_short_en" = $3 AND
+        "currencyunit" = $4 AND
+        "ProductionUnit" = $5
+    GROUP BY 
+        "report_year"
+    ORDER BY 
+        "report_year";
+    `
+
+	// Выполняем запрос
+	rows, err := r.Db.QueryContext(ctx, query, reporttype, reportYear, company, currency, unit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make(map[int]float64)
+	for rows.Next() {
+		var year int
+		var totalCapEx sql.NullFloat64 // Используем sql.NullFloat64 для обработки NULL
+		if err := rows.Scan(&year, &totalCapEx); err != nil {
+			return nil, err
+		}
+
+		// Проверяем, было ли значение NULL, и устанавливаем результат
+		if totalCapEx.Valid {
+			result[year] = totalCapEx.Float64
+		} else {
+			result[year] = 0 // Если значение NULL, устанавливаем 0
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}

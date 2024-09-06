@@ -44,7 +44,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	subsoil_geojson_service := &publicServices.SubsoilGeojsonService{Repo: subsoil_geojson_repository}
 
 	tax_burden_repository := &prodRepositories.TaxBurdenRepository{Db: db}
-	tax_burden_service := &prodServices.TaxBurdenService{Repo: tax_burden_repository}
+	tax_burden_service := &prodServices.TaxBurdenService{Repo: tax_burden_repository, Cache: cache}
 
 	specific_taxes_repository := &prodRepositories.SpecificTaxesRepository{Db: db}
 	specific_taxes_service := &prodServices.SpecificTaxesService{Repo: specific_taxes_repository}
@@ -56,7 +56,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	production_gas_service := &prodServices.ProductionGasService{Repo: production_gas_repository}
 
 	kgd_taxes_prod_repository := &prodRepositories.KgdTaxesProdRepository{Db: db}
-	kgd_taxes_prod_service := &prodServices.KgdTaxesProdService{Repo: kgd_taxes_prod_repository}
+	kgd_taxes_prod_service := &prodServices.KgdTaxesProdService{Repo: kgd_taxes_prod_repository, Cache: cache}
 
 	gas_steps_repository := &prodRepositories.GasStepsRepository{Db: db}
 	gas_steps_service := &prodServices.GasStepsService{Repo: gas_steps_repository}
@@ -71,7 +71,7 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	investment_review_forecast_total_service := &dmartServices.InvestmentReviewForecastTotalService{Repo: investment_review_forecast_total_repository}
 
 	kgd_taxes_repository := &rawDataRepositories.KgdTaxesRepository{Db: db}
-	kgd_taxes_service := &rawDataServices.KgdTaxesService{Repo: kgd_taxes_repository}
+	kgd_taxes_service := &rawDataServices.KgdTaxesService{Repo: kgd_taxes_repository, Cache: cache}
 
 	invest_potential_main_repository := &dmartRepositories.InvestPotentialMainRepository{Db: db}
 	invest_potential_main_service := &dmartServices.InvestPotentialMainService{Repo: invest_potential_main_repository}
@@ -83,10 +83,10 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 	st_gas_balance_service := &rawDataServices.StGasBalanceService{Repo: st_gas_balance_repository}
 
 	investment_oil_production_repository := &dmartRepositories.InvestmentOilProductionRepository{Db: db}
-	investment_oil_production_service := &dmartServices.InvestmentOilProductionService{Repo: investment_oil_production_repository}
+	investment_oil_production_service := &dmartServices.InvestmentOilProductionService{Repo: investment_oil_production_repository, Cache: cache}
 
 	investment_reserves_repository := &dmartRepositories.InvestmentReservesRepository{Db: db}
-	investment_reserves_service := &dmartServices.InvestmentReservesService{Repo: investment_reserves_repository}
+	investment_reserves_service := &dmartServices.InvestmentReservesService{Repo: investment_reserves_repository, Cache: cache}
 
 	dfo_gg_reportes_repository := &dmartRepositories.DfoGgReportesRepository{Db: db}
 	dfo_gg_reportes_service := &dmartServices.DfoGgReportesService{Repo: dfo_gg_reportes_repository}
