@@ -19,6 +19,11 @@ import (
 	prodServices "tender/internal/services/prod"
 	publicServices "tender/internal/services/public"
 	rawDataServices "tender/internal/services/rawData"
+
+	newsHandlers "tender/internal/handlers/news"
+	reservesHandlers "tender/internal/handlers/reserves"
+	newsRepositories "tender/internal/repositories/news"
+	newsServices "tender/internal/services/news"
 )
 
 type application struct {
@@ -30,6 +35,10 @@ type application struct {
 	gas_review_handler              *gasHandlers.GasReviewHandler
 	oil_benchmarking_handler        *oilHandlers.OilBenchmarkingHandler
 	gas_performance_results_handler *gasHandlers.GasperformanceResultsHandler
+	media_analysis_handler          *newsHandlers.NewAnalyticsHandler
+	reserves_of_oil_handler         *reservesHandlers.ReservesOilHandler
+	reserves_of_gas_handler         *reservesHandlers.ReservesGasHandler
+	reserves_of_cond_handler        *reservesHandlers.ReservesCondHandler
 	// permissionHandler  *handlers.PermissionHandler
 	// companyHandler     *handlers.CompanyHandler
 	// transactionHandler *handlers.TransactionHandler
@@ -39,6 +48,18 @@ type application struct {
 func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 
 	cache := caching.NewInMemoryCache(10*time.Minute, 30*time.Minute)
+
+	reserves_of_cond_repository := &publicRepositories.ReservesCondNgsRepository{Db: db}
+	reserves_of_cond_service := &publicServices.ReservesCondNgsService{Repo: reserves_of_cond_repository}
+
+	reserves_of_gas_repository := &publicRepositories.ReservesGasNgsRepository{Db: db}
+	reserves_of_gas_service := &publicServices.ReservesGasNgsService{Repo: reserves_of_gas_repository}
+
+	reserves_of_oil_repository := &publicRepositories.ReservesOilNgsRepository{Db: db}
+	reserves_of_oil_service := &publicServices.ReservesOilNgsService{Repo: reserves_of_oil_repository}
+
+	google_news_repository := &newsRepositories.GoogleNewsRepository{Db: db}
+	google_news_service := &newsServices.GoogleNewsService{Repo: google_news_repository}
 
 	subsoil_geojson_repository := &publicRepositories.SubsoilGeojsonRepository{Db: db}
 	subsoil_geojson_service := &publicServices.SubsoilGeojsonService{Repo: subsoil_geojson_repository}
@@ -111,6 +132,10 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		StGasBalanceService:   st_gas_balance_service,
 	}
 
+	media_analysis_handler := &newsHandlers.NewAnalyticsHandler{
+
+		GoogleNewsService: google_news_service,
+	}
 	gas_performance_results_handler := &gasHandlers.GasperformanceResultsHandler{
 		DfoQazaqgasService:   dfo_qazaqgas_service,
 		DfoGgReportesService: dfo_gg_reportes_service,
@@ -142,6 +167,18 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 
 		SubsoilGeojsonService: subsoil_geojson_service,
 	}
+
+	reserves_of_gas_handler := &reservesHandlers.ReservesGasHandler{
+		ReservesGasService: *reserves_of_gas_service,
+	}
+
+	reserves_of_oil_handler := &reservesHandlers.ReservesOilHandler{
+		OilReservesService: *reserves_of_oil_service,
+	}
+
+	reserves_of_cond_handler := &reservesHandlers.ReservesCondHandler{
+		ReservesCondService: *reserves_of_cond_service,
+	}
 	// permissionRepo := &repositories.PermissionRepository{Db: db}
 	// permissionService := &services.PermissionService{Repo: permissionRepo}
 	// permissionHandler := &handlers.PermissionHandler{Service: permissionService}
@@ -166,6 +203,10 @@ func initializeApp(db *sql.DB, errorLog, infoLog *log.Logger) *application {
 		oil_review_handler:              oil_review_handler,
 		oil_performance_results_handler: oil_performance_results_handler,
 		oil_benchmarking_handler:        oil_benchmarking_handler,
+		media_analysis_handler:          media_analysis_handler,
+		reserves_of_oil_handler:         reserves_of_oil_handler,
+		reserves_of_gas_handler:         reserves_of_gas_handler,
+		reserves_of_cond_handler:        reserves_of_cond_handler,
 		// permissionHandler:  permissionHandler,
 		// companyHandler:     companyHandler,
 		// transactionHandler: transactionHandler,

@@ -3,8 +3,8 @@ package models
 import "time"
 
 // Main model for the NgsReservesGas table
-type NgsReservesGas struct {
-	Year                        int       `json:"year" db:"Год"`
+type NgsReservesOil struct {
+	Year                        time.Time `json:"year" db:"Год"`
 	Region                      string    `json:"region" db:"Регион"`
 	SubsoilUser                 string    `json:"subsoil_user" db:"Недропользователь"`
 	FieldBalanceNGS             string    `json:"field_balance_ngs" db:"Месторождения в балансе НГС"`
@@ -12,7 +12,6 @@ type NgsReservesGas struct {
 	FieldDevelopmentStage       string    `json:"field_development_stage" db:"Степень освоения месторождения"`
 	ContractNumber              string    `json:"contract_number" db:"Номер контракта"`
 	IssuanceDate                time.Time `json:"issuance_date" db:"Дата выдачи"`
-	GasType                     string    `json:"gas_type" db:"Вид газа"`
 	Type                        string    `json:"type" db:"Тип"`
 	ProductionSinceStart        float64   `json:"production_since_start" db:"Добыча с начала разработки"`
 	ProductionAtGKZApproval     float64   `json:"production_at_gkz_approval" db:"Добыча на дату утверждения ГКЗ"`
@@ -36,27 +35,20 @@ type NgsReservesGas struct {
 	ProductionABC1              float64   `json:"production_abc1" db:"Добыча(А+В+С1)"`
 	LossABC1                    float64   `json:"loss_abc1" db:"Потери(А+В+С1)"`
 	DevelopmentStage            string    `json:"development_stage" db:"stepen_osoveyna"`
-	GasTypeText                 string    `json:"gas_type_text" db:"Type gas"`
-	AlphRegionCount             int       `json:"Count"`
-	TotalReservesSum            float64   `json:"total_reserves_sum"`
+	OilTypeText                 string    `json:"type"`
 }
 
-type NgsReservesGasSummary struct {
+type ReservesOilNgsTotalProductionSummary struct {
+	Year int     `json:"year"`
+	Sum  float64 `json:"sum"`
+}
+
+type NgsReservesOilSummary struct {
 	Year            int `json:"year" db:"Год"`
 	AlphRegionCount int `json:"Count"`
 }
 
-type RecoverableGasReservesSummary struct {
-	Year          int     `json:"year" db:"year"`
-	TotalReserves float64 `json:"total_reserves" db:"total_reserves"`
-}
-
-type NgsReservesGasTotalReservesSummary struct {
-	Year             int     `json:"year" db:"Год"`
-	TotalReservesSum float64 `json:"total_reserves_sum"`
-}
-
-type NgsReservesGasTopCompanies struct {
-	CompanyName   string  `json:"Company"`
-	TotalReserves float64 `json:"TotalReserves"`
+type DepositsByRegionSummary struct {
+	Region     string `json:"region"`
+	FieldCount int    `json:"field_count"`
 }

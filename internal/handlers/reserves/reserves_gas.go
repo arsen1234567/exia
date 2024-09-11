@@ -9,14 +9,30 @@ import (
 	publicServies "tender/internal/services/public"
 )
 
-type ReservesOilHandler struct {
-	OilReservesService publicServies.ReservesOilNgsService
+type ReservesGasHandler struct {
+	ReservesGasService publicServies.ReservesGasNgsService
 }
 
-func (h *ReservesOilHandler) GetDeposit(w http.ResponseWriter, r *http.Request) {
+func (h *ReservesGasHandler) GetDeposit(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	data, err := h.OilReservesService.GetDeposit(ctx)
+	data, err := h.ReservesGasService.GetDeposit(ctx)
+	if err != nil {
+		http.Error(w, "Error fetching data", http.StatusInternalServerError)
+		log.Fatal(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		http.Error(w, "Error encoding response", http.StatusInternalServerError)
+	}
+}
+
+func (h *ReservesGasHandler) GetNumberOfCompanies(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	data, err := h.ReservesGasService.GetNumberOfCompanies(ctx)
 	if err != nil {
 		http.Error(w, "Error fetching data", http.StatusInternalServerError)
 		return
@@ -28,39 +44,47 @@ func (h *ReservesOilHandler) GetDeposit(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (h *ReservesOilHandler) GetNumberOfCompanies(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	data, err := h.OilReservesService.GetNumberOfCompanies(ctx)
-	if err != nil {
-		http.Error(w, "Error fetching data", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(data); err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-	}
-}
-
-func (h *ReservesOilHandler) GetReservesOilNgsTotalProduction(w http.ResponseWriter, r *http.Request) {
+func (h *ReservesGasHandler) GetTotalReserves(w http.ResponseWriter, r *http.Request) {
 	oilType := r.URL.Query().Get("type")
 	if oilType == "" {
 		http.Error(w, "Missing 'type' query parameter", http.StatusBadRequest)
 		return
 	}
 
-	result, err := h.OilReservesService.GetTotalProduction(context.Background(), oilType)
+	results, err := h.ReservesGasService.GetTotalReserves(context.Background(), oilType)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
+	if err := json.NewEncoder(w).Encode(results); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
-func (h *ReservesOilHandler) GetNumberOfDepositsByRegion(w http.ResponseWriter, r *http.Request) {
+func (h *ReservesGasHandler) GetProduction(w http.ResponseWriter, r *http.Request) {
+	oilType := r.URL.Query().Get("type")
+	if oilType == "" {
+		http.Error(w, "Missing 'type' query parameter", http.StatusBadRequest)
+		return
+	}
+
+	results, err := h.ReservesGasService.GetProduction(context.Background(), oilType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(results); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *ReservesGasHandler) GetNumberOfDepositsByRegion(w http.ResponseWriter, r *http.Request) {
 	yearStr := r.URL.Query().Get("year")
 	if yearStr == "" {
 		http.Error(w, "Missing 'year' query parameter", http.StatusBadRequest)
@@ -73,7 +97,7 @@ func (h *ReservesOilHandler) GetNumberOfDepositsByRegion(w http.ResponseWriter, 
 		return
 	}
 
-	result, err := h.OilReservesService.GetNumberOfDepositsByRegion(context.Background(), year)
+	result, err := h.ReservesGasService.GetNumberOfDepositsByRegion(context.Background(), year)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -83,7 +107,7 @@ func (h *ReservesOilHandler) GetNumberOfDepositsByRegion(w http.ResponseWriter, 
 	json.NewEncoder(w).Encode(result)
 }
 
-func (h *ReservesOilHandler) GetTopCompaniesByReserves(w http.ResponseWriter, r *http.Request) {
+func (h *ReservesGasHandler) GetTopCompaniesByReserves(w http.ResponseWriter, r *http.Request) {
 	yearStr := r.URL.Query().Get("year")
 	oilType := r.URL.Query().Get("oilType")
 
@@ -98,7 +122,7 @@ func (h *ReservesOilHandler) GetTopCompaniesByReserves(w http.ResponseWriter, r 
 		return
 	}
 
-	reserves, err := h.OilReservesService.GetTopCompaniesByReserves(r.Context(), year, oilType)
+	reserves, err := h.ReservesGasService.GetTopCompaniesByReserves(r.Context(), year, oilType)
 	if err != nil {
 		http.Error(w, "Failed to get reserves data", http.StatusInternalServerError)
 		log.Fatal(err)

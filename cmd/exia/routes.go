@@ -48,13 +48,46 @@ func (app *application) routes() http.Handler {
 	mux.Get("/api/oil/performance/capex", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashCapEx))
 	mux.Get("/api/oil/performance/cash", http.HandlerFunc(app.oil_performance_results_handler.GetInvestmentsDashCashEndPeriod))
 
+	mux.Get("/api/news/analysis/companies", http.HandlerFunc(app.media_analysis_handler.GetCompanyCount))
+	mux.Get("/api/news/analysis/media", http.HandlerFunc(app.media_analysis_handler.GetMediaCount))
+	mux.Get("/api/news/analysis/media-news", http.HandlerFunc(app.media_analysis_handler.GetMediaNews))
+	mux.Get("/api/news/analysis/sentimental", http.HandlerFunc(app.media_analysis_handler.GetSentimentCounts))
+	mux.Get("/api/news/analysis/sentimental_days", http.HandlerFunc(app.media_analysis_handler.GetSentimentDayCounts))
+	mux.Get("/api/news/analysis/sentimental_map", http.HandlerFunc(app.media_analysis_handler.GetSentimentMap))
+	mux.Get("/api/news/analysis/top_companies", http.HandlerFunc(app.media_analysis_handler.GetTopCompanyCount))
+	mux.Get("/api/news/analysis/top_companies_dict", http.HandlerFunc(app.media_analysis_handler.GetTopCompanyCountDict))
+	mux.Get("/api/news/analysis/source_count", http.HandlerFunc(app.media_analysis_handler.GetSourceCount))
+	mux.Get("/api/news/analysis/news", http.HandlerFunc(app.media_analysis_handler.GetNewsByPeriod))
+
 	mux.Get("/api/oil/benchmarking/specific_net_profit", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashSpecificNetProfitGraph)) // WORK
 	mux.Get("/api/oil/benchmarking/roa", http.HandlerFunc(app.oil_benchmarking_handler.GetInvestmentsDashROAGraph))                               // WORK
 	mux.Get("/api/oil/benchmarking/specific_taxes", http.HandlerFunc(app.oil_benchmarking_handler.GetSpecificTaxesGraph))                         // WORK
 	mux.Get("/api/oil/benchmarking/tax_burden_graph", http.HandlerFunc(app.oil_benchmarking_handler.GetTaxBurdenGraph))                           // UPDATING
-	mux.Get("/api/oil/benchmarking/sum_taxes", http.HandlerFunc(app.oil_benchmarking_handler.GetSummaAllTaxes))                                   // WORK
+	mux.Get("/api/oil/benchmarking/sum_taxes", http.HandlerFunc(app.oil_benchmarking_handler.GetSummaAllTaxes))
 
-	mux.Get("/api/oil/reserves/subsoil_geojson", http.HandlerFunc(app.oil_reserves_handler.GetSubsoilGeojson))
+	// RESERVES START
+
+	mux.Get("/api/oil/reserves/deposits", http.HandlerFunc(app.reserves_of_oil_handler.GetDeposit))
+	mux.Get("/api/oil/reserves/companies", http.HandlerFunc(app.reserves_of_oil_handler.GetNumberOfCompanies))
+	mux.Get("/api/oil/reserves/total-production", http.HandlerFunc(app.reserves_of_oil_handler.GetReservesOilNgsTotalProduction))
+	mux.Get("/api/oil/reserves/deposit_region", http.HandlerFunc(app.reserves_of_oil_handler.GetNumberOfDepositsByRegion))
+	mux.Get("/api/oil/reserves/top_companies", http.HandlerFunc(app.reserves_of_oil_handler.GetTopCompaniesByReserves))
+
+	mux.Get("/api/gas/reserves/deposits", http.HandlerFunc(app.reserves_of_gas_handler.GetDeposit))
+	mux.Get("/api/gas/reserves/companies", http.HandlerFunc(app.reserves_of_gas_handler.GetNumberOfCompanies))
+	mux.Get("/api/gas/reserves/total-reserves", http.HandlerFunc(app.reserves_of_gas_handler.GetTotalReserves))
+	mux.Get("/api/gas/reserves/production", http.HandlerFunc(app.reserves_of_gas_handler.GetProduction))
+	mux.Get("/api/gas/reserves/deposit_region", http.HandlerFunc(app.reserves_of_gas_handler.GetNumberOfDepositsByRegion))
+	mux.Get("/api/gas/reserves/top_companies", http.HandlerFunc(app.reserves_of_gas_handler.GetTopCompaniesByReserves))
+
+	mux.Get("/api/cond/reserves/deposits", http.HandlerFunc(app.reserves_of_cond_handler.GetDeposit))
+	mux.Get("/api/cond/reserves/companies", http.HandlerFunc(app.reserves_of_cond_handler.GetNumberOfCompanies))
+	mux.Get("/api/cond/reserves/total-reserves", http.HandlerFunc(app.reserves_of_cond_handler.GetTotalReserves))
+	mux.Get("/api/cond/reserves/production", http.HandlerFunc(app.reserves_of_cond_handler.GetProduction))
+	mux.Get("/api/cond/reserves/deposit_region", http.HandlerFunc(app.reserves_of_cond_handler.GetNumberOfDepositsByRegion))
+	mux.Get("/api/cond/reserves/top_companies", http.HandlerFunc(app.reserves_of_cond_handler.GetTopCompaniesByReserves))
+
+	// RESERVES END
 
 	mux.Get("/api/gas/review/financial_indicators/production", http.HandlerFunc(app.gas_review_handler.GetGasProductionSummary))
 	mux.Get("/api/gas/review/financial_indicators/taxes", http.HandlerFunc(app.gas_review_handler.GetKgdTaxesSummary))                                  // UPDATED

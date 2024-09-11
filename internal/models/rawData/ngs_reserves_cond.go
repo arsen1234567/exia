@@ -3,7 +3,7 @@ package models
 import "time"
 
 // Main model for the NgsReservesGas table
-type NgsReservesGas struct {
+type NgsReservesCond struct {
 	Year                        int       `json:"year" db:"Год"`
 	Region                      string    `json:"region" db:"Регион"`
 	SubsoilUser                 string    `json:"subsoil_user" db:"Недропользователь"`
@@ -41,22 +41,22 @@ type NgsReservesGas struct {
 	TotalReservesSum            float64   `json:"total_reserves_sum"`
 }
 
-type NgsReservesGasSummary struct {
+type NgsReservesCondSummary struct {
 	Year            int `json:"year" db:"Год"`
 	AlphRegionCount int `json:"Count"`
 }
 
-type RecoverableGasReservesSummary struct {
-	Year          int     `json:"year" db:"year"`
-	TotalReserves float64 `json:"total_reserves" db:"total_reserves"`
-}
-
-type NgsReservesGasTotalReservesSummary struct {
+type NgsReservesCondTotalReservesSummary struct {
 	Year             int     `json:"year" db:"Год"`
 	TotalReservesSum float64 `json:"total_reserves_sum"`
 }
 
-type NgsReservesGasTopCompanies struct {
+type RecoverableCondReservesSummary struct {
+	Year          int     `json:"year" db:"year"`
+	TotalReserves float64 `json:"total_reserves" db:"total_reserves"`
+}
+
+type NgsReservesCondTopCompanies struct {
 	CompanyName   string  `json:"Company"`
 	TotalReserves float64 `json:"TotalReserves"`
 }
