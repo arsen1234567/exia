@@ -69,7 +69,7 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/api/oil/reserves/deposits", http.HandlerFunc(app.reserves_of_oil_handler.GetDeposit))
 	mux.Get("/api/oil/reserves/companies", http.HandlerFunc(app.reserves_of_oil_handler.GetNumberOfCompanies))
-	mux.Get("/api/oil/reserves/total-production", http.HandlerFunc(app.reserves_of_oil_handler.GetReservesOilNgsTotalProduction))
+	mux.Get("/api/oil/reserves/production", http.HandlerFunc(app.reserves_of_oil_handler.GetReservesOilNgsTotalProduction))
 	mux.Get("/api/oil/reserves/deposit_region", http.HandlerFunc(app.reserves_of_oil_handler.GetNumberOfDepositsByRegion))
 	mux.Get("/api/oil/reserves/top_companies", http.HandlerFunc(app.reserves_of_oil_handler.GetTopCompaniesByReserves))
 
