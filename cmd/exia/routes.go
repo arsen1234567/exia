@@ -67,25 +67,25 @@ func (app *application) routes() http.Handler {
 
 	// RESERVES START
 
-	mux.Get("/api/oil/reserves/deposits", http.HandlerFunc(app.reserves_of_oil_handler.GetDeposit))
-	mux.Get("/api/oil/reserves/companies", http.HandlerFunc(app.reserves_of_oil_handler.GetNumberOfCompanies))
-	mux.Get("/api/oil/reserves/production", http.HandlerFunc(app.reserves_of_oil_handler.GetReservesOilNgsTotalProduction))
-	mux.Get("/api/oil/reserves/deposit_region", http.HandlerFunc(app.reserves_of_oil_handler.GetNumberOfDepositsByRegion))
-	mux.Get("/api/oil/reserves/top_companies", http.HandlerFunc(app.reserves_of_oil_handler.GetTopCompaniesByReserves))
+	mux.Get("/api/reserves/oil/deposits", http.HandlerFunc(app.reserves_of_oil_handler.GetDeposit))
+	mux.Get("/api/reserves/oil/companies", http.HandlerFunc(app.reserves_of_oil_handler.GetNumberOfCompanies))
+	mux.Get("/api/reserves/oil/production", http.HandlerFunc(app.reserves_of_oil_handler.GetReservesOilNgsTotalProduction))
+	mux.Get("/api/reserves/oil/deposit_region", http.HandlerFunc(app.reserves_of_oil_handler.GetNumberOfDepositsByRegion))
+	mux.Get("/api/reserves/oil/top_companies", http.HandlerFunc(app.reserves_of_oil_handler.GetTopCompaniesByReserves))
 
-	mux.Get("/api/gas/reserves/deposits", http.HandlerFunc(app.reserves_of_gas_handler.GetDeposit))
-	mux.Get("/api/gas/reserves/companies", http.HandlerFunc(app.reserves_of_gas_handler.GetNumberOfCompanies))
-	mux.Get("/api/gas/reserves/total-reserves", http.HandlerFunc(app.reserves_of_gas_handler.GetTotalReserves))
-	mux.Get("/api/gas/reserves/production", http.HandlerFunc(app.reserves_of_gas_handler.GetProduction))
-	mux.Get("/api/gas/reserves/deposit_region", http.HandlerFunc(app.reserves_of_gas_handler.GetNumberOfDepositsByRegion))
-	mux.Get("/api/gas/reserves/top_companies", http.HandlerFunc(app.reserves_of_gas_handler.GetTopCompaniesByReserves))
+	mux.Get("/api/reserves/gas/deposits", http.HandlerFunc(app.reserves_of_gas_handler.GetDeposit))
+	mux.Get("/api/reserves/gas/companies", http.HandlerFunc(app.reserves_of_gas_handler.GetNumberOfCompanies))
+	mux.Get("/api/reserves/gas/total-reserves", http.HandlerFunc(app.reserves_of_gas_handler.GetTotalReserves))
+	mux.Get("/api/reserves/gas/production", http.HandlerFunc(app.reserves_of_gas_handler.GetProduction))
+	mux.Get("/api/reserves/gas/deposit_region", http.HandlerFunc(app.reserves_of_gas_handler.GetNumberOfDepositsByRegion))
+	mux.Get("/api/reserves/gas/top_companies", http.HandlerFunc(app.reserves_of_gas_handler.GetTopCompaniesByReserves))
 
-	mux.Get("/api/cond/reserves/deposits", http.HandlerFunc(app.reserves_of_cond_handler.GetDeposit))
-	mux.Get("/api/cond/reserves/companies", http.HandlerFunc(app.reserves_of_cond_handler.GetNumberOfCompanies))
-	mux.Get("/api/cond/reserves/total-reserves", http.HandlerFunc(app.reserves_of_cond_handler.GetTotalReserves))
-	mux.Get("/api/cond/reserves/production", http.HandlerFunc(app.reserves_of_cond_handler.GetProduction))
-	mux.Get("/api/cond/reserves/deposit_region", http.HandlerFunc(app.reserves_of_cond_handler.GetNumberOfDepositsByRegion))
-	mux.Get("/api/cond/reserves/top_companies", http.HandlerFunc(app.reserves_of_cond_handler.GetTopCompaniesByReserves))
+	mux.Get("/api/reserves/cond/deposits", http.HandlerFunc(app.reserves_of_cond_handler.GetDeposit))
+	mux.Get("/api/reserves/cond/companies", http.HandlerFunc(app.reserves_of_cond_handler.GetNumberOfCompanies))
+	mux.Get("/api/reserves/cond/total-reserves", http.HandlerFunc(app.reserves_of_cond_handler.GetTotalReserves))
+	mux.Get("/api/reserves/cond/production", http.HandlerFunc(app.reserves_of_cond_handler.GetProduction))
+	mux.Get("/api/reserves/cond/deposit_region", http.HandlerFunc(app.reserves_of_cond_handler.GetNumberOfDepositsByRegion))
+	mux.Get("/api/reserves/cond/top_companies", http.HandlerFunc(app.reserves_of_cond_handler.GetTopCompaniesByReserves))
 
 	// RESERVES END
 
