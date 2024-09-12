@@ -51,7 +51,18 @@ func (h *ReservesGasHandler) GetTotalReserves(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	results, err := h.ReservesGasService.GetTotalReserves(context.Background(), oilType)
+	var oilTypeString string
+	switch oilType {
+	case "geological":
+		oilTypeString = "Геологические"
+	case "recoverable":
+		oilTypeString = "Извлекаемые"
+	default:
+		http.Error(w, "Invalid report type. Only 'geological' (Геологические) and 'recoverable' (Извлекаемые) are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	results, err := h.ReservesGasService.GetTotalReserves(context.Background(), oilTypeString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -70,8 +81,18 @@ func (h *ReservesGasHandler) GetProduction(w http.ResponseWriter, r *http.Reques
 		http.Error(w, "Missing 'type' query parameter", http.StatusBadRequest)
 		return
 	}
+	var oilTypeString string
+	switch oilType {
+	case "geological":
+		oilTypeString = "Геологические"
+	case "recoverable":
+		oilTypeString = "Извлекаемые"
+	default:
+		http.Error(w, "Invalid report type. Only 'geological' (Геологические) and 'recoverable' (Извлекаемые) are allowed.", http.StatusBadRequest)
+		return
+	}
 
-	results, err := h.ReservesGasService.GetProduction(context.Background(), oilType)
+	results, err := h.ReservesGasService.GetProduction(context.Background(), oilTypeString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -116,13 +137,24 @@ func (h *ReservesGasHandler) GetTopCompaniesByReserves(w http.ResponseWriter, r 
 		return
 	}
 
+	var oilTypeString string
+	switch oilType {
+	case "geological":
+		oilTypeString = "Геологические"
+	case "recoverable":
+		oilTypeString = "Извлекаемые"
+	default:
+		http.Error(w, "Invalid report type. Only 'geological' (Геологические) and 'recoverable' (Извлекаемые) are allowed.", http.StatusBadRequest)
+		return
+	}
+
 	year, err := strconv.Atoi(yearStr)
 	if err != nil {
 		http.Error(w, "Invalid year parameter", http.StatusBadRequest)
 		return
 	}
 
-	reserves, err := h.ReservesGasService.GetTopCompaniesByReserves(r.Context(), year, oilType)
+	reserves, err := h.ReservesGasService.GetTopCompaniesByReserves(r.Context(), year, oilTypeString)
 	if err != nil {
 		http.Error(w, "Failed to get reserves data", http.StatusInternalServerError)
 		log.Fatal(err)

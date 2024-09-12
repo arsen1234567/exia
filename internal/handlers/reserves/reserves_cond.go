@@ -51,7 +51,18 @@ func (h *ReservesCondHandler) GetTotalReserves(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	results, err := h.ReservesCondService.GetTotalReserves(context.Background(), oilType)
+	var oilTypeString string
+	switch oilType {
+	case "geological":
+		oilTypeString = "Геологические"
+	case "recoverable":
+		oilTypeString = "Извлекаемые"
+	default:
+		http.Error(w, "Invalid report type. Only 'geological' (Геологические) and 'recoverable' (Извлекаемые) are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	results, err := h.ReservesCondService.GetTotalReserves(context.Background(), oilTypeString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -71,7 +82,19 @@ func (h *ReservesCondHandler) GetProduction(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	results, err := h.ReservesCondService.GetProduction(context.Background(), oilType)
+	var oilTypeString string
+	switch oilType {
+	case "geological":
+		oilTypeString = "Геологические"
+	case "recoverable":
+		oilTypeString = "Извлекаемые"
+	default:
+		http.Error(w, "Invalid report type. Only 'geological' (Геологические) and 'recoverable' (Извлекаемые) are allowed.", http.StatusBadRequest)
+		return
+	}
+
+
+	results, err := h.ReservesCondService.GetProduction(context.Background(), oilTypeString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -122,7 +145,18 @@ func (h *ReservesCondHandler) GetTopCompaniesByReserves(w http.ResponseWriter, r
 		return
 	}
 
-	reserves, err := h.ReservesCondService.GetTopCompaniesByReserves(r.Context(), year, oilType)
+	var oilTypeString string
+	switch oilType {
+	case "geological":
+		oilTypeString = "Геологические"
+	case "recoverable":
+		oilTypeString = "Извлекаемые"
+	default:
+		http.Error(w, "Invalid report type. Only 'geological' (Геологические) and 'recoverable' (Извлекаемые) are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	reserves, err := h.ReservesCondService.GetTopCompaniesByReserves(r.Context(), year, oilTypeString)
 	if err != nil {
 		http.Error(w, "Failed to get reserves data", http.StatusInternalServerError)
 		log.Fatal(err)
