@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	models "tender/internal/models/prod" // Ensure this is correct
 )
 
@@ -48,10 +49,10 @@ func (r *KgdTaxesProdRepository) GetKgdTaxesProdSummaryForYearRange(ctx context.
 	return results, nil
 }
 
-func (r *KgdTaxesProdRepository) GetSummaAllTaxes(ctx context.Context, year int, currency, reporttype string) (map[string]float64, error) {
-	query := `
+func (r *KgdTaxesProdRepository) GetSummaAllTaxes(ctx context.Context, year int, currency, reporttype, language string) (map[string]float64, map[string]float64, error) {
+	query := fmt.Sprintf(`
     SELECT 
-        "name_short_en",
+        %s,
         COALESCE(SUM("TotalTaxes"), 0) AS total_value
     FROM 
 	dmart.investments_dash
@@ -60,12 +61,26 @@ func (r *KgdTaxesProdRepository) GetSummaAllTaxes(ctx context.Context, year int,
         "currencyunit" = $2 AND
 		"report_type" = $3
     GROUP BY 
-        "name_short_en";
+	%s;
+    `, language, language)
+
+	query2 := `
+    SELECT 
+        name_abbr,
+        COALESCE(SUM("TotalTaxes"), 0) AS total_value
+    FROM 
+	dmart.investments_dash
+    WHERE 
+        "report_year" = $1 AND
+        "currencyunit" = $2 AND
+		"report_type" = $3
+    GROUP BY 
+	name_abbr;
     `
 
 	rows, err := r.Db.QueryContext(ctx, query, year, currency, reporttype)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer rows.Close()
 
@@ -74,14 +89,34 @@ func (r *KgdTaxesProdRepository) GetSummaAllTaxes(ctx context.Context, year int,
 		var companyName string
 		var totalValue float64
 		if err := rows.Scan(&companyName, &totalValue); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		result[companyName] = totalValue
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return result, nil
+	rows2, err := r.Db.QueryContext(ctx, query2, year, currency, reporttype)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer rows.Close()
+
+	result2 := make(map[string]float64)
+	for rows2.Next() {
+		var companyName string
+		var totalValue float64
+		if err := rows2.Scan(&companyName, &totalValue); err != nil {
+			return nil, nil, err
+		}
+		result2[companyName] = totalValue
+	}
+
+	if err := rows2.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	return result, result2, nil
 }

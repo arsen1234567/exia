@@ -14,8 +14,8 @@ type TaxBurdenService struct {
 	Cache caching.Cache
 }
 
-func (s *TaxBurdenService) GetTaxBurden(ctx context.Context, year int, currency string) (map[string]float64, error) {
-	cacheKey := fmt.Sprintf("tax_burden_%d_%s", year, currency)
+func (s *TaxBurdenService) GetTaxBurden(ctx context.Context, year int, currency, language string) (map[string]float64, error) {
+	cacheKey := fmt.Sprintf("tax_burden_%d_%s", year, currency, language)
 
 	if cachedData, found := s.Cache.Get(ctx, cacheKey); found {
 		return cachedData.(map[string]float64), nil
@@ -32,7 +32,7 @@ func (s *TaxBurdenService) GetTaxBurden(ctx context.Context, year int, currency 
 		wg.Add(1)
 		go func(year int) {
 			defer wg.Done()
-			results, err := s.Repo.GetTaxBurden(ctx, year, currency)
+			results, err := s.Repo.GetTaxBurden(ctx, year, currency, language)
 			if err != nil {
 				errorChan <- err
 				return

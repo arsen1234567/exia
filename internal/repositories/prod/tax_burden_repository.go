@@ -3,16 +3,17 @@ package repositories
 import (
 	"context"
 	"database/sql"
+	"fmt"
 )
 
 type TaxBurdenRepository struct {
 	Db *sql.DB
 }
 
-func (r *TaxBurdenRepository) GetTaxBurden(ctx context.Context, year int, currency string) (map[string]float64, error) {
-	query := `
+func (r *TaxBurdenRepository) GetTaxBurden(ctx context.Context, year int, currency, language string) (map[string]float64, error) {
+	query := fmt.Sprintf(`
     SELECT 
-        "Company",
+        "%s",
         COALESCE(SUM("value"), 0) AS total_value
     FROM 
         prod.tax_burden
@@ -20,8 +21,8 @@ func (r *TaxBurdenRepository) GetTaxBurden(ctx context.Context, year int, curren
         "year" = $1 AND
         "currency" = $2 
     GROUP BY 
-        "Company";
-    `
+	"%s";
+    `, language, language)
 
 	rows, err := r.Db.QueryContext(ctx, query, year, currency)
 	if err != nil {

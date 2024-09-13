@@ -60,23 +60,25 @@ func (r *InvestmentReviewForecastStepsRepository) GetEbitdaToGrossRevenueRatio(c
 	return ebitdaToGrossRevenueRatio.Float64, nil
 }
 
-func (r *InvestmentReviewForecastStepsRepository) GetCompaniesForecastSteps(ctx context.Context, unit string) ([]models.InvestmentReviewForecastStepsSummary, error) {
-	query := `
-	SELECT 
-	    "name_short_en", 
-	    "Year",
-	    SUM("OilProduction") AS OilProduction
-	FROM 
-	    dmart.investment_review_forecast_steps
-	WHERE 
-	    scenario IN ('Forecast BBrent BCPI') AND
-		unit = $1
-	GROUP BY 
-		"name_short_en", "Year"
-	ORDER BY
-	    "Year", "name_short_en"
-	`
+func (r *InvestmentReviewForecastStepsRepository) GetCompaniesForecastSteps(ctx context.Context, unit, language string) ([]models.InvestmentReviewForecastStepsSummary, error) {
 
+	query := fmt.Sprintf(`
+		SELECT 
+			%s AS NameAbbr, 
+			"Year",
+			SUM("OilProduction") AS OilProduction
+		FROM 
+			dmart.investment_review_forecast_steps
+		WHERE 
+			scenario IN ('Forecast BBrent BCPI') AND
+			unit = $1
+		GROUP BY 
+			%s, "Year"
+		ORDER BY
+			"Year", %s
+	`, language, language, language)
+
+	// Выполняем запрос
 	rows, err := r.Db.QueryContext(ctx, query, unit)
 	if err != nil {
 		return nil, err

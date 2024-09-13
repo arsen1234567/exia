@@ -46,13 +46,13 @@ func getExchangeRate(amount float64) (float64, error) {
 	return data.Result, nil
 }
 
-func (s *SpecificTaxesService) GetSpecificTaxes(ctx context.Context, year int, currency, reporttype string) (map[string]float64, error) {
+func (s *SpecificTaxesService) GetSpecificTaxes(ctx context.Context, year int, currency, reporttype, language string) (map[string]float64, map[string]float64, error) {
 
-	totalSumSummary, err := s.Repo.GetSpecificTaxes(ctx, year, currency, reporttype)
+	totalSumSummary, totalSumSummaryy, err := s.Repo.GetSpecificTaxes(ctx, year, currency, reporttype, language)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return totalSumSummary, nil
+	return totalSumSummary, totalSumSummaryy, nil
 }
 
 // 	totalSumSummary, err := s.Repo.GetSpecificTaxes(ctx, productionunit, year, currency)

@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 )
 
@@ -692,50 +693,94 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashLiabilities(ctx context.Co
 	return result, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificNetProfitGraph(ctx context.Context, currencyunit, productionunit, reporttype string, reportYear int) (map[string]float64, error) {
-	query := `
-    SELECT 
-        "name_short_en",
-        COALESCE(AVG(NULLIF("NetProfit", 0) / NULLIF("Production", 0)), 0) AS avg_net_profit_per_production
-    FROM 
-        dmart.investments_dash
-    WHERE 
-        "currencyunit" = $1 AND
-        "ProductionUnit" = $2 AND
+func (r *InvestmentsDashRepository) GetInvestmentsDashSpecificNetProfitGraph(ctx context.Context, currencyunit, productionunit, reporttype, language string, reportYear int) (map[string]float64, map[string]float64, error) {
+	var query1, query2 string
+
+	// Запрос для name_short_ru
+	query1 = fmt.Sprintf(`
+	SELECT 
+		%s,
+		COALESCE(AVG(NULLIF("NetProfit", 0) / NULLIF("Production", 0)), 0) AS avg_net_profit_per_production
+	FROM 
+		dmart.investments_dash
+	WHERE 
+		"currencyunit" = $1 AND
+		"ProductionUnit" = $2 AND
 		"report_type" = $3 AND
-        "report_year" = $4
-        
-    GROUP BY 
-        "name_short_en";
-    `
+		"report_year" = $4
+	GROUP BY 
+	%s
+	ORDER BY
+	%s
+	`, language, language, language)
 
-	rows, err := r.Db.QueryContext(ctx, query, currencyunit, productionunit, reporttype, reportYear)
+	// Запрос для name_abbr
+	query2 = `
+	SELECT 
+		name_abbr,
+		COALESCE(AVG(NULLIF("NetProfit", 0) / NULLIF("Production", 0)), 0) AS avg_net_profit_per_production
+	FROM 
+		dmart.investments_dash
+	WHERE 
+		"currencyunit" = $1 AND
+		"ProductionUnit" = $2 AND
+		"report_type" = $3 AND
+		"report_year" = $4
+	GROUP BY 
+		name_abbr
+	ORDER BY
+		name_abbr
+	`
+
+	// Выполняем первый запрос для name_short_ru
+	rows1, err := r.Db.QueryContext(ctx, query1, currencyunit, productionunit, reporttype, reportYear)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	defer rows.Close()
+	defer rows1.Close()
 
-	result := make(map[string]float64)
-	for rows.Next() {
+	resultShortRu := make(map[string]float64)
+	for rows1.Next() {
 		var nameShortRu string
 		var avgNetProfitPerProduction float64
-		if err := rows.Scan(&nameShortRu, &avgNetProfitPerProduction); err != nil {
-			return nil, err
+		if err := rows1.Scan(&nameShortRu, &avgNetProfitPerProduction); err != nil {
+			return nil, nil, err
 		}
-		result[nameShortRu] = avgNetProfitPerProduction
+		resultShortRu[nameShortRu] = avgNetProfitPerProduction
 	}
 
-	if err := rows.Err(); err != nil {
-		return nil, err
+	if err := rows1.Err(); err != nil {
+		return nil, nil, err
 	}
 
-	return result, nil
+	// Выполняем второй запрос для name_abbr
+	rows2, err := r.Db.QueryContext(ctx, query2, currencyunit, productionunit, reporttype, reportYear)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer rows2.Close()
+
+	resultAbbr := make(map[string]float64)
+	for rows2.Next() {
+		var nameAbbr string
+		var avgNetProfitPerProduction float64
+		if err := rows2.Scan(&nameAbbr, &avgNetProfitPerProduction); err != nil {
+			return nil, nil, err
+		}
+		resultAbbr[nameAbbr] = avgNetProfitPerProduction
+	}
+
+	if err := rows2.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	return resultShortRu, resultAbbr, nil
 }
 
-func (r *InvestmentsDashRepository) GetInvestmentsDashROAGraph(ctx context.Context, reporttype string, reportYear int) (map[string]float64, error) {
-	query := `
+func (r *InvestmentsDashRepository) GetInvestmentsDashROAGraph(ctx context.Context, reporttype, language string, reportYear int) (map[string]float64, map[string]float64, error) {
+	query := fmt.Sprintf(`
     SELECT 
-        "name_short_en",
+        %s,
         COALESCE(AVG(NULLIF("NetProfit", 0) / NULLIF(("ShortAssets" + "LongAssets" + "ShortAssetsSale"), 0)), 0) AS avg_roa
     FROM 
         dmart.investments_dash
@@ -743,12 +788,27 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashROAGraph(ctx context.Conte
         "report_type" = $1 AND
 		"report_year" = $2
     GROUP BY 
-        "name_short_en";
-    `
+        %s;
+    `, language, language)
+
+	query2 := `
+	SELECT 
+		name_abbr,
+		COALESCE(AVG(NULLIF("NetProfit", 0) / NULLIF(("ShortAssets" + "LongAssets" + "ShortAssetsSale"), 0)), 0) AS avg_roa
+	FROM 
+		dmart.investments_dash
+	WHERE 
+	"report_type" = $1 AND
+	"report_year" = $2
+	GROUP BY 
+		name_abbr
+	ORDER BY
+		name_abbr
+	`
 
 	rows, err := r.Db.QueryContext(ctx, query, reporttype, reportYear)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer rows.Close()
 
@@ -757,16 +817,36 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashROAGraph(ctx context.Conte
 		var nameShortRu string
 		var avgROA float64
 		if err := rows.Scan(&nameShortRu, &avgROA); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		result[nameShortRu] = avgROA
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return result, nil
+	rows2, err := r.Db.QueryContext(ctx, query2, reporttype, reportYear)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer rows2.Close()
+
+	resultAbbr := make(map[string]float64)
+	for rows2.Next() {
+		var nameAbbr string
+		var avgNetProfitPerProduction float64
+		if err := rows2.Scan(&nameAbbr, &avgNetProfitPerProduction); err != nil {
+			return nil, nil, err
+		}
+		resultAbbr[nameAbbr] = avgNetProfitPerProduction
+	}
+
+	if err := rows2.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	return result, resultAbbr, nil
 }
 
 func (r *InvestmentsDashRepository) GetInvestmentsDashCurrentRatio(ctx context.Context, reporttype, company, currency, unit string, reportYear int) (map[string]float64, error) {
@@ -778,7 +858,7 @@ func (r *InvestmentsDashRepository) GetInvestmentsDashCurrentRatio(ctx context.C
     WHERE 
         "report_type" = $1 AND
 		"report_year" = $2 AND
-        "name_short_en" = $3 AND
+        "name_short_ru" = $3 AND
 		"currencyunit" = $4 AND
 		"ProductionUnit" = $5;
     `

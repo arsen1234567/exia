@@ -173,20 +173,21 @@ func (s *InvestmentsDashService) GetInvestmentsDashLiabilities(ctx context.Conte
 	return totalSumSummary, nil
 }
 
-func (s *InvestmentsDashService) GetInvestmentsDashSpecificNetProfitGraph(ctx context.Context, currencyunit, productionunit, reporttype string, reportyear int) (map[string]float64, error) {
-	totalSumSummary, err := s.Repo.GetInvestmentsDashSpecificNetProfitGraph(ctx, currencyunit, productionunit, reporttype, reportyear)
+func (s *InvestmentsDashService) GetInvestmentsDashSpecificNetProfitGraph(ctx context.Context, currencyunit, productionunit, reporttype, language string, reportyear int) (map[string]float64, map[string]float64, error) {
+
+	totalSumSummary, totalSumSummaryy, err := s.Repo.GetInvestmentsDashSpecificNetProfitGraph(ctx, currencyunit, productionunit, reporttype, language, reportyear)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return totalSumSummary, nil
+	return totalSumSummary, totalSumSummaryy, nil
 } // s
 
-func (s *InvestmentsDashService) GetInvestmentsDashROAGraph(ctx context.Context, reporttype string, reportyear int) (map[string]float64, error) {
-	totalSumSummary, err := s.Repo.GetInvestmentsDashROAGraph(ctx, reporttype, reportyear)
+func (s *InvestmentsDashService) GetInvestmentsDashROAGraph(ctx context.Context, reporttype, language string, reportyear int) (map[string]float64, map[string]float64, error) {
+	totalSumSummary, totalSumSummaryy, err := s.Repo.GetInvestmentsDashROAGraph(ctx, reporttype, language, reportyear)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return totalSumSummary, nil
+	return totalSumSummary, totalSumSummaryy, nil
 }
 
 func (s *InvestmentsDashService) GetInvestmentsDashCurrentRatio(ctx context.Context, reporttype, company, currency, unit string, reportyear int) (map[string]float64, error) {

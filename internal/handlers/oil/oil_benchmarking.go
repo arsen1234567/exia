@@ -21,6 +21,7 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 	productionunit := r.URL.Query().Get("unit")
 	reportyear_str := r.URL.Query().Get("year")
 	reportType := r.URL.Query().Get("reportType")
+	language := r.URL.Query().Get("language")
 
 	var reportTypeString string
 	switch reportType {
@@ -30,6 +31,17 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 		reportTypeString = "Не консолидированный"
 	default:
 		http.Error(w, "Invalid report type. Only '1' (Консолидированный) and '0' (Не консолидированный) are allowed.", http.StatusBadRequest)
+		return
+	}
+
+	var languageString string
+	switch language {
+	case "ru":
+		languageString = "name_short_ru"
+	case "en":
+		languageString = "name_short_en"
+	default:
+		http.Error(w, "Invalid language type. Only 'ru' (name_short_ru) and 'en' (name_short_en) are allowed.", http.StatusBadRequest)
 		return
 	}
 
@@ -50,7 +62,7 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashSpecificNetProfitGraph(ctx, currencyunit, productionunit, reportTypeString, reportyear)
+	totalSumSummary, totalSumSummaryy, err := h.InvestmentsDashService.GetInvestmentsDashSpecificNetProfitGraph(ctx, currencyunit, productionunit, reportTypeString, languageString, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -60,11 +72,17 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashSpecificNetProfitGraph(w http
 	if err := json.NewEncoder(w).Encode(totalSumSummary); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
+
+	if err := json.NewEncoder(w).Encode(totalSumSummaryy); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 func (h *OilBenchmarkingHandler) GetInvestmentsDashROAGraph(w http.ResponseWriter, r *http.Request) {
 	reportType := r.URL.Query().Get("reportType")
 	reportyear_str := r.URL.Query().Get("year")
+
+	language := r.URL.Query().Get("language")
 
 	if reportyear_str == "" {
 		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
@@ -87,8 +105,19 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashROAGraph(w http.ResponseWrite
 		return
 	}
 
+	var languageString string
+	switch language {
+	case "ru":
+		languageString = "name_short_ru"
+	case "en":
+		languageString = "name_short_en"
+	default:
+		http.Error(w, "Invalid language type. Only 'ru' (name_short_ru) and 'en' (name_short_en) are allowed.", http.StatusBadRequest)
+		return
+	}
+
 	ctx := context.Background()
-	totalSumSummary, err := h.InvestmentsDashService.GetInvestmentsDashROAGraph(ctx, reportTypeString, reportyear)
+	totalSumSummary, totalSumSummaryy, err := h.InvestmentsDashService.GetInvestmentsDashROAGraph(ctx, reportTypeString, languageString, reportyear)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -96,6 +125,10 @@ func (h *OilBenchmarkingHandler) GetInvestmentsDashROAGraph(w http.ResponseWrite
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(totalSumSummary); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+
+	if err := json.NewEncoder(w).Encode(totalSumSummaryy); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
@@ -106,6 +139,8 @@ func (h *OilBenchmarkingHandler) GetSpecificTaxesGraph(w http.ResponseWriter, r 
 	currencyunit := r.URL.Query().Get("currency")
 	reportType := r.URL.Query().Get("reportType")
 
+	language := r.URL.Query().Get("language")
+
 	if reportyear_str == "" {
 		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
 		return
@@ -122,6 +157,17 @@ func (h *OilBenchmarkingHandler) GetSpecificTaxesGraph(w http.ResponseWriter, r 
 		return
 	}
 
+	var languageString string
+	switch language {
+	case "ru":
+		languageString = "name_short_ru"
+	case "en":
+		languageString = "name_short_en"
+	default:
+		http.Error(w, "Invalid language type. Only 'ru' (name_short_ru) and 'en' (name_short_en) are allowed.", http.StatusBadRequest)
+		return
+	}
+
 	var reportTypeString string
 	switch reportType {
 	case "1":
@@ -134,7 +180,7 @@ func (h *OilBenchmarkingHandler) GetSpecificTaxesGraph(w http.ResponseWriter, r 
 	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.SpecificTaxesService.GetSpecificTaxes(ctx, reportyear, currencyunit, reportTypeString)
+	totalSumSummary, totalSumSummaryy, err := h.SpecificTaxesService.GetSpecificTaxes(ctx, reportyear, currencyunit, reportTypeString, languageString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -144,12 +190,17 @@ func (h *OilBenchmarkingHandler) GetSpecificTaxesGraph(w http.ResponseWriter, r 
 	if err := json.NewEncoder(w).Encode(totalSumSummary); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
+
+	if err := json.NewEncoder(w).Encode(totalSumSummaryy); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 func (h *OilBenchmarkingHandler) GetTaxBurdenGraph(w http.ResponseWriter, r *http.Request) {
 
 	year_str := r.URL.Query().Get("year")
 	currency := r.URL.Query().Get("currency")
+	language := r.URL.Query().Get("language")
 
 	if year_str == "" {
 		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
@@ -166,9 +217,19 @@ func (h *OilBenchmarkingHandler) GetTaxBurdenGraph(w http.ResponseWriter, r *htt
 		http.Error(w, "Invalid currency unit. Only 'KZT' and 'USD' are allowed.", http.StatusBadRequest)
 		return
 	}
+	var languageString string
+	switch language {
+	case "ru":
+		languageString = "Компания"
+	case "en":
+		languageString = "Company"
+	default:
+		http.Error(w, "Invalid language type. Only 'en' (Company) and 'ru' (Компания) are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	ctx := context.Background()
-	totalSumSummary, err := h.TaxBurdenService.GetTaxBurden(ctx, year, currency)
+	totalSumSummary, err := h.TaxBurdenService.GetTaxBurden(ctx, year, currency, languageString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -185,6 +246,7 @@ func (h *OilBenchmarkingHandler) GetSummaAllTaxes(w http.ResponseWriter, r *http
 	year_str := r.URL.Query().Get("year")
 	currency := r.URL.Query().Get("currency")
 	reportType := r.URL.Query().Get("reportType")
+	language := r.URL.Query().Get("language")
 
 	if year_str == "" {
 		http.Error(w, "Year parameter is required.", http.StatusBadRequest)
@@ -213,8 +275,20 @@ func (h *OilBenchmarkingHandler) GetSummaAllTaxes(w http.ResponseWriter, r *http
 		return
 	}
 
+	var languageString string
+
+	switch language {
+	case "ru":
+		languageString = "name_short_ru"
+	case "en":
+		languageString = "name_short_en"
+	default:
+		http.Error(w, "Invalid language type. Only 'ru' (name_short_ru) and 'en' (name_short_en) are allowed.", http.StatusBadRequest)
+		return
+	}
+
 	ctx := context.Background()
-	totalSumSummary, err := h.KgdTaxesProdService.GetSummaAllTaxes(ctx, year, currency, reportTypeString)
+	totalSumSummary, totalSumSummaryy, err := h.KgdTaxesProdService.GetSummaAllTaxes(ctx, year, currency, reportTypeString, languageString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -222,6 +296,10 @@ func (h *OilBenchmarkingHandler) GetSummaAllTaxes(w http.ResponseWriter, r *http
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(totalSumSummary); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+
+	if err := json.NewEncoder(w).Encode(totalSumSummaryy); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }

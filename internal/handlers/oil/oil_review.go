@@ -249,9 +249,11 @@ func (h *OilReviewHandler) GetCompaniesForecastSteps(w http.ResponseWriter, r *h
 		return
 	}
 
+	language := r.URL.Query().Get("language")
+
 	ctx := r.Context()
 
-	oilProductions, err := h.InvestmentReviewForecastStepsService.GetCompaniesForecastStepsSummary(ctx, unit)
+	oilProductions, err := h.InvestmentReviewForecastStepsService.GetCompaniesForecastStepsSummary(ctx, unit, language)
 	if err != nil {
 		http.Error(w, "Error retrieving data", http.StatusInternalServerError)
 		log.Println("Error retrieving data:", err)

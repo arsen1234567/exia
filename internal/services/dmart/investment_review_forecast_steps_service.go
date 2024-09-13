@@ -26,8 +26,19 @@ func (s *InvestmentReviewForecastStepsService) GetEbitdaToGrossRevenueRatio(ctx 
 	return summary, nil
 }
 
-func (s *InvestmentReviewForecastStepsService) GetCompaniesForecastStepsSummary(ctx context.Context, unit string) ([]models.InvestmentReviewForecastStepsSummary, error) {
-	summary, err := s.Repo.GetCompaniesForecastSteps(ctx, unit)
+func (s *InvestmentReviewForecastStepsService) GetCompaniesForecastStepsSummary(ctx context.Context, unit, language string) ([]models.InvestmentReviewForecastStepsSummary, error) {
+
+	var languageString string
+	switch language {
+	case "ru":
+		languageString = "name_short_ru"
+	case "en":
+		languageString = "name_short_en"
+	default:
+		return nil, nil
+	}
+
+	summary, err := s.Repo.GetCompaniesForecastSteps(ctx, unit, languageString)
 	if err != nil {
 		return nil, err
 	}

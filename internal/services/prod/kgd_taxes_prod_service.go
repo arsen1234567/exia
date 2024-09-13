@@ -73,10 +73,10 @@ func generateYearRanges(startYear, endYear, interval int) []struct{ startYear, e
 	return ranges
 }
 
-func (s *KgdTaxesProdService) GetSummaAllTaxes(ctx context.Context, year int, currency, reporttype string) (map[string]float64, error) {
-	totalSumSummary, err := s.Repo.GetSummaAllTaxes(ctx, year, currency, reporttype)
+func (s *KgdTaxesProdService) GetSummaAllTaxes(ctx context.Context, year int, currency, reporttype, language string) (map[string]float64, map[string]float64, error) {
+	totalSumSummary, totalSumSummaryy, err := s.Repo.GetSummaAllTaxes(ctx, year, currency, reporttype, language)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return totalSumSummary, nil
+	return totalSumSummary, totalSumSummaryy, nil
 }
