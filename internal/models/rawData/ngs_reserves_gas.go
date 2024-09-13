@@ -53,7 +53,7 @@ type RecoverableGasReservesSummary struct {
 
 type NgsReservesGasTotalReservesSummary struct {
 	Year             int     `json:"year" db:"Год"`
-	TotalReservesSum float64 `json:"total_reserves_sum"`
+	TotalReservesSum float64 `json:"sum"`
 }
 
 type NgsReservesGasTopCompanies struct {
